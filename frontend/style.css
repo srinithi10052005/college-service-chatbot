@@ -39,5 +39,14 @@ button {
 button:hover {
     background-color: #1e6091;
 }
+.watermark {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.2); /* light transparent */
+    pointer-events: none; /* cannot be clicked */
+    z-index: 1000;
+}
 
 
