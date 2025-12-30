@@ -1,24 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>College Help Desk Chatbot</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Assistant</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <!-- Header -->
+    <header class="header">
+        <img src="images/college_logo.png" alt="College Logo" class="logo">
+        <h1>Service Assistant</h1>
+    </header>
 
-<img src="image/college_logo.png" alt="College Logo" class="logo">
+    <!-- Main Section -->
+    <main class="container">
+        <h2>Welcome to Service Assistant</h2>
+        <p>Your smart helper for managing services easily.</p>
 
-<h2>College Help Desk Chatbot</h2>
+        <button onclick="showMessage()">Get Started</button>
+    </main>
 
-
-<div id="chatbox"></div>
-
-<input type="text" id="userInput" placeholder="Ask about scholarships or college services">
-<button id="sendBtn">Send</button>
-
-<script src="script.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
 
