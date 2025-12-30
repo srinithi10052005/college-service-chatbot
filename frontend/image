@@ -1,2 +1,14 @@
 drag and use in vs code 
 rename as college_logo
+How to add the logo
+
+Create a folder named images
+
+Paste your logo image inside it
+
+Rename the image to
+👉 college_logo.png
+
+Path used:
+
+<img src="images/college_logo.png">
