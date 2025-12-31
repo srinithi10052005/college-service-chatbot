@@ -1,28 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Assistant</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SDNB Helpbot</title>
+
+  <!-- Link CSS -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-     <div class="watermark">Service Assistant</div>
+
+  <div class="chat-container">
+
     <!-- Header -->
-    <header class="header">
-        <img src="images/college_logo.png" alt="College Logo" class="logo">
-        <h1>Service Assistant</h1>
-    </header>
+    <div class="chat-header">
+      <!-- Replace with your logo -->
+      <img src="logo.png" alt="SDNB Logo">
+      <h3>SDNB Helpbot</h3>
+    </div>
 
-    <!-- Main Section -->
-    <main class="container">
-        <h2>Welcome to Service Assistant</h2>
-        <p>Your smart helper for managing services easily.</p>
+    <!-- Chat Body -->
+    <div class="chat-body" id="chatBody">
+      <div class="bot-message">
+        Welcome to SDNB HelpBot! I'm your admissions assistant.
+        I'm here to answer your questions!
+        <br><br>
+        To help you better, please let me know which language you are most comfortable conversing in.
+      </div>
+    </div>
 
-        <button onclick="showMessage()">Get Started</button>
-    </main>
+    <!-- Language Buttons -->
+    <div class="language-buttons">
+      <button onclick="selectLanguage('English')">English</button>
+      <button onclick="selectLanguage('Tamil')">Tamil</button>
+    </div>
 
-    <script src="script.js"></script>
+    <!-- Input Area -->
+    <div class="chat-input">
+      <input type="text" id="userInput" placeholder="Ask your question..." />
+      <button class="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+
+  </div>
+
+  <!-- Link JS -->
+  <script src="script.js"></script>
 </body>
 </html>
+
 
