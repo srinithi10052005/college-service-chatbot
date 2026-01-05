@@ -82,7 +82,7 @@ body {
   padding: 10px 14px;
   border-radius: 20px;
   border: 2px solid #8b1c2d
-  outline: none;
+  outline none;
   font-size: 14px;
 }
 .send-btn {
