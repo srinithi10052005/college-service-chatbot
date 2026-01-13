@@ -22,10 +22,10 @@ function sendMessage() {
   const botMsg = document.createElement("div");
   botMsg.className = "bot-message";
 
-  if (selectedLanguage === "Tamil") {
-    botMsg.textContent = "உங்கள் கேள்விக்கு நன்றி! 😊";
+if (selectedLanguage === "Tamil") {
+    botMsg.textContent = "வணக்கம்! நான் ASKNOVA, SDNB வைஷ்ணவா மகளிர் கல்லூரியின் சேவை உதவியாளர். இன்று நான் உங்களுக்கு எவ்வாறு உதவலாம்?";
   } else {
-    botMsg.textContent = "Thank you for your question! 😊";
+    botMsg.textContent = "Hello! I’m ASKNOVA, the Service Assistant Bot of SDNB Vaishnav College for Women. How can I help you today?";
   }
 
   setTimeout(() => {
