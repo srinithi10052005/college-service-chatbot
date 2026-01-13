@@ -116,7 +116,7 @@ body {
   z-index: 1; /* Place behind other elements */
 }
 .user-message {
-  background: #d1e7dd;
+  background: #f7e6e9;
   padding: 8px;
   border-radius: 6px;
   margin: 8px 0 8px auto;
@@ -130,3 +130,31 @@ body {
   margin: 8px 0;
   max-width: 70%;
 }
+.chat-header {
+  position: relative;
+  height: 60px;
+  background-color: #8b1d2c; /* maroon */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* keeps text centered */
+}
+
+.chat-header h3 {
+  color: white;
+  margin: 0;
+}
+
+.logo {
+  height: 40px;
+}
+
+.left-logo {
+  position: absolute;
+  left: 15px;
+}
+
+.right-logo {
+  position: absolute;
+  right: 15px;
+}
+
