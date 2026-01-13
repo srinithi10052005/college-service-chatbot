@@ -1,3 +1,4 @@
+
 * {
   box-sizing: border-box;
   font-family: Arial, Helvetica, sans-serif;
@@ -107,13 +108,25 @@ body {
   transform: translate(-50%, -50%); /* Exactly center the watermark */
   width: 200px; /* Adjust the width of the watermark */
   height: 200px; /* Adjust the height of the watermark */
-  background-image: url('logo.png'); /* Replace with the actual path to your logo */
+  background-image: url('SDNBV\ College\ Logo.png'); /* Replace with the actual path to your logo */
   background-size: contain; /* Scale the logo to fit the dimensions */
   background-repeat: no-repeat; /* Prevent logo from repeating */
   opacity: 0.1; /* Light opacity for a watermark effect */
   pointer-events: none; /* Ensure the watermark doesn't interfere with interactions */
   z-index: 1; /* Place behind other elements */
 }
+.user-message {
+  background: #d1e7dd;
+  padding: 8px;
+  border-radius: 6px;
+  margin: 8px 0 8px auto;
+  max-width: 70%;
+}
 
-
-
+.bot-message {
+  background: #f1f1f1;
+  padding: 8px;
+  border-radius: 6px;
+  margin: 8px 0;
+  max-width: 70%;
+}
