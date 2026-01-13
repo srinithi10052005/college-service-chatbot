@@ -1,3 +1,7 @@
+// Store selected language (default English)
+let selectedLanguage = "English";
+
+// Send Message Function
 function sendMessage() {
   const input = document.getElementById("userInput");
   const message = input.value.trim();
@@ -6,20 +10,43 @@ function sendMessage() {
 
   const chatBody = document.getElementById("chatBody");
 
-  // User message
+  // User Message
   const userMsg = document.createElement("div");
-  userMsg.className = "bot-message";
-  userMsg.style.background = "#d1e7dd";
-  userMsg.style.marginLeft = "auto";
+  userMsg.className = "user-message";
   userMsg.textContent = message;
-
   chatBody.appendChild(userMsg);
 
   input.value = "";
-  chatBody.scrollTop = chatBody.scrollHeight;
+
+  // Bot Reply (based on language)
+  const botMsg = document.createElement("div");
+  botMsg.className = "bot-message";
+
+  if (selectedLanguage === "Tamil") {
+    botMsg.textContent = "உங்கள் கேள்விக்கு நன்றி! 😊";
+  } else {
+    botMsg.textContent = "Thank you for your question! 😊";
+  }
+
+  setTimeout(() => {
+    chatBody.appendChild(botMsg);
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }, 500);
 }
 
+// Language Selection Function
 function selectLanguage(lang) {
-  alert("Language selected: " + lang);
+  selectedLanguage = lang;
+
+  const botMessage = document.getElementById("botMessage");
+
+  if (lang === "Tamil") {
+    botMessage.innerHTML =
+      "👋 SDNB ASKNOVA-விற்கு வரவேற்கிறோம். உங்கள் கேள்விகளுக்கு உதவ நான் இங்கு இருக்கும் உங்கள் சேவை உதவியாளர் 😊.";
+  } else {
+    botMessage.innerHTML =
+      "👋 Welcome to SDNB ASKNOVA. I am your service assistant, here to assist you with your inquiries 😊.";
+  }
 }
+
 
