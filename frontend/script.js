@@ -48,5 +48,12 @@ function selectLanguage(lang) {
       "👋 Welcome to SDNB ASKNOVA. I am your service assistant, here to assist you with your inquiries 😊.";
   }
 }
+// Send message on Enter key press
+document.getElementById("userInput").addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    event.preventDefault(); // prevent form submit or newline
+    sendMessage();
+  }
+});
 
 
