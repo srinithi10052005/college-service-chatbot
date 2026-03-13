@@ -18,9 +18,7 @@ if ($message === "") {
     exit;
 }
 
-/* ==================================
-   ✅ 1) GREETING BASED ON LANGUAGE
-   ================================== */
+/* 1) Greeting */
 if (in_array($message, [
     "hi", "hello", "hey", "good morning", "good afternoon", "good evening",
     "வணக்கம்", "ஹாய்", "ஹலோ", "காலை வணக்கம்", "மாலை வணக்கம்"
@@ -37,9 +35,7 @@ if (in_array($message, [
     exit;
 }
 
-/* ================================
-   ✅ 2) PERCENTAGE ATTENDANCE RULE
-   ================================ */
+/* 2) Attendance % rule */
 if (preg_match('/(\d+)\s*%/', $message, $m)) {
     $percent = floatval($m[1]);
 
@@ -72,11 +68,11 @@ if (preg_match('/(\d+)\s*%/', $message, $m)) {
     }
 }
 
-/* ==================================
-   ✅ 3) NORMAL KEYWORD INTENT MATCHING
-   ================================== */
-$sql = "SELECT keywords, response FROM chatbot_intents";
-$result = $conn->query($sql);
+/* 3) Keyword matching filtered by selected language */
+$stmt = $conn->prepare("SELECT keywords, response FROM chatbot_intents WHERE language = ?");
+$stmt->bind_param("s", $language);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($language === "Tamil") {
     $reply = "மன்னிக்கவும், உங்கள் கேள்வியை நான் புரிந்து கொள்ளவில்லை.";
@@ -88,13 +84,11 @@ if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $keywords = strtolower($row["keywords"]);
 
-        // Match full keyword string
         if (strpos($message, $keywords) !== false) {
             $reply = $row["response"];
             break;
         }
 
-        // Match any word in keywords
         $words = preg_split('/\s+/', $keywords);
         foreach ($words as $w) {
             $w = trim($w);
