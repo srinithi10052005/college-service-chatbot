@@ -1,0 +1,159 @@
+
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+body {
+  margin: 0;
+  background: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.chat-container {
+  width: 360px;
+  height: 640px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.chat-header {
+  background: #8b1c2d;
+  color: #ffffff;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.chat-header img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+.chat-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+.chat-body {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  background: #fafafa;
+}
+.bot-message {
+  background: #e9ecef;
+  padding: 12px 14px;
+  border-radius: 12px;
+  max-width: 85%;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.language-buttons {
+  padding: 12px;
+  display: flex;
+  gap: 10px;
+}
+.language-buttons button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1.5px solid #8b1c2d;
+  background: #ffffff;
+  color: #8b1c2d;
+  cursor: pointer;
+  font-size: 13px;
+}
+.language-buttons button:hover {
+  background:  #8b1c2d;
+  color: #ffffff;
+}
+.chat-input {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid #ddd;
+}
+.chat-input input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 20px;
+  border: 2px solid #8b1c2d
+  outline none;
+  font-size: 14px;
+}
+.send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: #8b1c2d;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 18px;
+}
+.send-btn:hover {
+  background:#8b1c2d;
+}
+/* Watermark */
+.chat-container::before {
+  content: "";
+  position: absolute;
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Exactly center the watermark */
+  width: 200px; /* Adjust the width of the watermark */
+  height: 200px; /* Adjust the height of the watermark */
+  background-image: url('SDNBV\ College\ Logo.png'); /* Replace with the actual path to your logo */
+  background-size: contain; /* Scale the logo to fit the dimensions */
+  background-repeat: no-repeat; /* Prevent logo from repeating */
+  opacity: 0.1; /* Light opacity for a watermark effect */
+  pointer-events: none; /* Ensure the watermark doesn't interfere with interactions */
+  z-index: 1; /* Place behind other elements */
+}
+.user-message {
+  background: #f7e6e9;
+  padding: 8px;
+  border-radius: 6px;
+  margin: 8px 0 8px auto;
+  max-width: 70%;
+}
+
+.bot-message {
+  background: #f1f1f1;
+  padding: 8px;
+  border-radius: 6px;
+  margin: 8px 0;
+  max-width: 70%;
+}
+.chat-header {
+  position: relative;
+  height: 60px;
+  background-color: #8b1d2c; /* maroon */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* keeps text centered */
+}
+
+.chat-header h3 {
+  color: white;
+  margin: 0;
+}
+
+.logo {
+  height: 40px;
+}
+
+.left-logo {
+  position: absolute;
+  left: 15px;
+}
+
+.right-logo {
+  position: absolute;
+  right: 15px;
+}
