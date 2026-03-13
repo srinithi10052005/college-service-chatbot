@@ -1,3 +1,14 @@
+## Database Setup
+
+1. Open XAMPP and start Apache and MySQL.
+2. Open phpMyAdmin.
+3. Create a database named `college_db`.
+4. Import the file `database/college_db.sql`.
+5. Run the chatbot project.
+
+
+
+
 CREATE DATABASE IF NOT EXISTS college_db
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_general_ci;
@@ -226,3 +237,4 @@ VALUES
 
 (4, 'English', 'Transfer Certificate', 'Students must complete department and office clearance before receiving TC.', NULL, 'Clearance Required', FALSE, FALSE),
 (4, 'Tamil', 'மாற்றுச் சான்றிதழ்', 'TC பெற துறை மற்றும் அலுவலக clearance முடிக்க வேண்டும்.', NULL, 'Clearance அவசியம்', FALSE, FALSE);
+
