@@ -238,3 +238,118 @@ VALUES
 (4, 'English', 'Transfer Certificate', 'Students must complete department and office clearance before receiving TC.', NULL, 'Clearance Required', FALSE, FALSE),
 (4, 'Tamil', 'மாற்றுச் சான்றிதழ்', 'TC பெற துறை மற்றும் அலுவலக clearance முடிக்க வேண்டும்.', NULL, 'Clearance அவசியம்', FALSE, FALSE);
 
+CREATE TABLE attendance_categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category_code VARCHAR(5) NOT NULL,
+    min_percent INT NOT NULL,
+    max_percent INT NOT NULL,
+    language VARCHAR(20) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    response TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS modules (
+    module_id INT AUTO_INCREMENT PRIMARY KEY,
+    module_name VARCHAR(100) NOT NULL UNIQUE
+);
+
+ALTER TABLE chatbot_intents
+ADD COLUMN intent_name VARCHAR(100) NOT NULL AFTER language;
+
+
+INSERT INTO modules (module_name)
+VALUES ('Attendance')
+ON DUPLICATE KEY UPDATE module_name = module_name;
+
+INSERT INTO attendance_categories (category_code, min_percent, max_percent, language, title, response)
+VALUES
+('A', 75, 100, 'English', 'Category A', 'Minimum attendance required is 75%. Students with 75% and above are eligible to write exams without condonation.'),
+('B', 65, 74, 'English', 'Category B', 'Students with attendance between 65% and 74% must pay a condonation fee of Rs.250. Theory and practical may be treated separately.'),
+('C', 50, 64, 'English', 'Category C', 'Students with attendance between 50% and 64% are not permitted to appear for the regular examination. They may be allowed to take the next examination as per rules.'),
+('D', 1, 49, 'English', 'Category D', 'Students with attendance between 1% and 49% must repeat the course by rejoining. University permission is required.'),
+('E', 0, 0, 'English', 'Category E', 'Students with 0% attendance must repeat the course immediately by rejoining with prior University permission.');
+
+INSERT INTO attendance_categories (category_code, min_percent, max_percent, language, title, response)
+VALUES
+('A', 75, 100, 'Tamil', 'வகை A', 'குறைந்தபட்ச attendance 75% ஆகும். 75% மற்றும் அதற்கு மேல் உள்ளவர்கள் எந்த condonation fee இல்லாமல் தேர்வு எழுதலாம்.'),
+('B', 65, 74, 'Tamil', 'வகை B', '65% முதல் 74% வரை attendance உள்ளவர்கள் ரூ.250 condonation fee செலுத்த வேண்டும். Theory மற்றும் practical தனித்தனியாக இருக்கலாம்.'),
+('C', 50, 64, 'Tamil', 'வகை C', '50% முதல் 64% வரை attendance உள்ளவர்கள் regular தேர்வில் எழுத அனுமதிக்கப்படமாட்டார்கள். விதிமுறைகளின்படி அடுத்த தேர்வில் எழுத அனுமதி கிடைக்கலாம்.'),
+('D', 1, 49, 'Tamil', 'வகை D', '1% முதல் 49% வரை attendance உள்ளவர்கள் course-ஐ மீண்டும் join செய்து படிக்க வேண்டும். University அனுமதி அவசியம்.'),
+('E', 0, 0, 'Tamil', 'வகை E', '0% attendance உள்ளவர்கள் course-ஐ உடனடியாக மீண்டும் join செய்ய வேண்டும். University முன் அனுமதி பெற வேண்டும்.');
+
+INSERT INTO chatbot_intents (module_id, language, intent_name, keywords, response)
+VALUES
+(
+    (SELECT module_id FROM modules WHERE module_name='Attendance'),
+    'English',
+    'minimum_attendance',
+    'minimum attendance,required attendance,least attendance,attendance minimum',
+    'Minimum attendance required is 75%.'
+),
+(
+    (SELECT module_id FROM modules WHERE module_name='Attendance'),
+    'English',
+    'attendance_condonation_fee',
+    'condonation fee,attendance fee,low attendance fee,fee for attendance shortage',
+    'Students with attendance between 65% and 74% must pay a condonation fee of Rs.250.'
+),
+(
+    (SELECT module_id FROM modules WHERE module_name='Attendance'),
+    'English',
+    'attendance_rules_full',
+    'attendance rules,attendance eligibility,eligibility norms,full attendance details',
+    'FULL_RULES'
+),
+(
+    (SELECT module_id FROM modules WHERE module_name='Attendance'),
+    'English',
+    'attendance_zero',
+    '0 attendance,zero attendance,no attendance',
+    'Students with 0% attendance must repeat the course immediately by rejoining with prior University permission.'
+),
+(
+    (SELECT module_id FROM modules WHERE module_name='Attendance'),
+    'English',
+    'attendance_below_49',
+    'below 49 attendance,less attendance,repeat course,1 to 49 attendance',
+    'Students with attendance between 1% and 49% must repeat the course by rejoining. University permission is required.'
+);
+
+INSERT INTO chatbot_intents (module_id, language, intent_name, keywords, response)
+VALUES
+(
+    (SELECT module_id FROM modules WHERE module_name='Attendance'),
+    'Tamil',
+    'minimum_attendance',
+    'குறைந்தபட்ச attendance,minimum attendance tamil,தேவையான attendance,attendance எவ்வளவு வேண்டும்',
+    'குறைந்தபட்ச attendance 75% ஆகும்.'
+),
+(
+    (SELECT module_id FROM modules WHERE module_name='Attendance'),
+    'Tamil',
+    'attendance_condonation_fee',
+    'condonation fee,attendance fee,அபராத கட்டணம்,attendance குறைவு fee',
+    '65% முதல் 74% வரை attendance உள்ளவர்கள் ரூ.250 condonation fee செலுத்த வேண்டும்.'
+),
+(
+    (SELECT module_id FROM modules WHERE module_name='Attendance'),
+    'Tamil',
+    'attendance_rules_full',
+    'attendance rules,வருகை விதிமுறை,attendance eligibility,முழு attendance விவரம்',
+    'FULL_RULES'
+),
+(
+    (SELECT module_id FROM modules WHERE module_name='Attendance'),
+    'Tamil',
+    'attendance_zero',
+    '0 attendance,zero attendance,attendance இல்லை',
+    '0% attendance உள்ளவர்கள் course-ஐ உடனடியாக மீண்டும் join செய்ய வேண்டும். University முன் அனுமதி பெற வேண்டும்.'
+),
+(
+    (SELECT module_id FROM modules WHERE module_name='Attendance'),
+    'Tamil',
+    'attendance_below_49',
+    '49 க்கும் குறைவான attendance,repeat course,குறைந்த attendance',
+    '1% முதல் 49% வரை attendance உள்ளவர்கள் course-ஐ மீண்டும் join செய்து படிக்க வேண்டும். University அனுமதி அவசியம்.'
+);
+
