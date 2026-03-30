@@ -6,52 +6,261 @@
 4. Import the file `database/college_db.sql`.
 5. Run the chatbot project.
 
-
-
-
 CREATE DATABASE IF NOT EXISTS college_db
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_general_ci;
 
 USE college_db;
 
--- =========================
--- 1. MODULES TABLE
--- =========================
+SET FOREIGN_KEY_CHECKS = 0;
+
+DROP TABLE IF EXISTS admin_services;
+DROP TABLE IF EXISTS attendance_categories;
+DROP TABLE IF EXISTS chatbot_intents;
+DROP TABLE IF EXISTS policies;
+DROP TABLE IF EXISTS student_requests;
 DROP TABLE IF EXISTS modules;
 
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- =========================
+-- 1. MODULES
+-- =========================
 CREATE TABLE modules (
     module_id INT AUTO_INCREMENT PRIMARY KEY,
-    module_name VARCHAR(100) NOT NULL
+    module_name VARCHAR(100) NOT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO modules (module_name) VALUES
-('General'),
-('Fees'),
-('Leave'),
-('Certificate'),
-('Admission');
+INSERT INTO modules (module_id, module_name) VALUES
+(1, 'General'),
+(2, 'Fees'),
+(3, 'Leave'),
+(4, 'Certificate'),
+(5, 'Admission'),
+(6, 'Attendance');
 
 -- =========================
--- 2. CHATBOT_INTENTS TABLE
+-- 2. CHATBOT INTENTS
 -- =========================
-DROP TABLE IF EXISTS chatbot_intents;
-
 CREATE TABLE chatbot_intents (
     intent_id INT AUTO_INCREMENT PRIMARY KEY,
     module_id INT NOT NULL,
-    language VARCHAR(20) NOT NULL DEFAULT 'English',
+    language VARCHAR(20) NOT NULL,
+    intent_name VARCHAR(100) NOT NULL,
     keywords TEXT NOT NULL,
-    user_question TEXT,
     response TEXT NOT NULL,
     FOREIGN KEY (module_id) REFERENCES modules(module_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- =========================
--- 3. POLICIES TABLE
--- =========================
-DROP TABLE IF EXISTS policies;
+INSERT INTO chatbot_intents (intent_id, module_id, language, intent_name, keywords, response) VALUES
 
+-- Greeting
+(1, 1, 'English', 'greeting',
+'hi, hello, hey, good morning, good afternoon, good evening',
+'👋 Welcome to SDNB ASKNOVA. I am your service assistant. How can I help you today?'),
+
+(2, 1, 'Tamil', 'greeting',
+'வணக்கம், ஹாய், ஹலோ, காலை வணக்கம், மாலை வணக்கம்',
+'👋 எஸ்டிஎன்பி ASKNOVA-க்கு வரவேற்கிறோம். நான் உங்கள் சேவை உதவியாளர். உங்கள் கேள்விகளுக்கு உதவ தயாராக உள்ளேன்.'),
+
+-- Outpass
+(3, 3, 'English', 'outpass',
+'outpass, out pass, how to get outpass, outpass procedure, gate pass, leave permission, campus leave, permission to leave, permission to go outside, campus exit permission, go outside permission, exit campus',
+'Outpass Procedure:
+1. Get permission from your Class Incharge
+2. Get approval from the HOD
+3. Enter your details in the outpass register
+4. Show the outpass at the gate/security
+5. Then you can leave the campus'),
+
+(4, 3, 'Tamil', 'outpass',
+'அவுட்பாஸ், வெளியே செல்ல அனுமதி, outpass procedure',
+'அவுட்பாஸ் நடைமுறை:
+1. முதலில் உங்கள் Class Incharge-ிடம் அனுமதி பெற வேண்டும்
+2. அதன் பிறகு HOD-ிடம் அனுமதி பெற வேண்டும்
+3. Outpass register-ல் பதிவு செய்ய வேண்டும்
+4. Gate-ல் outpass காட்ட வேண்டும்
+5. அதன் பிறகு வெளியே செல்லலாம்'),
+
+-- Bonafide main menu
+(5, 4, 'English', 'bonafide',
+'bonafide',
+'There are multiple Bonafide Certificates available:
+
+1. Course Bonafide
+2. Passport Bonafide
+3. Bonafide Without Fee Payment
+4. General Bonafide Certificate
+
+👉 Please type:
+- course bonafide
+- passport bonafide
+- general bonafide certificate
+- bonafide without fee'),
+
+(6, 4, 'Tamil', 'bonafide',
+'போனாபைடு, போனாபைடு சான்றிதழ்',
+'பல வகையான Bonafide Certificates உள்ளன:
+
+1. Course Bonafide
+2. Passport Bonafide
+3. Fee இல்லாமல் Bonafide
+4. General Bonafide Certificate
+
+👉 தயவு செய்து type செய்யவும்:
+- course bonafide
+- passport bonafide
+- general bonafide certificate
+- bonafide without fee'),
+
+-- TC passout
+(7, 4, 'English', 'tc_procedure',
+'tc, tc procedure, transfer certificate, how to get tc, tc process, certificate process, tc for passout, passout tc',
+'Transfer Certificate Procedure (Pass Out Students):
+
+1. Visit your department
+2. Submit TC application
+3. Get HOD signature
+4. Complete office clearance
+5. Collect TC from Admin Office'),
+
+(8, 4, 'Tamil', 'tc_procedure',
+'tc, transfer certificate, tc நடைமுறை',
+'TC பெறும் நடைமுறை:
+
+1. துறைக்கு சென்று விண்ணப்பிக்க வேண்டும்
+2. HOD கையொப்பம் பெற வேண்டும்
+3. Office clearance முடிக்க வேண்டும்
+4. Admin Office-ல் TC பெறலாம்'),
+
+-- Missing ID
+(9, 3, 'English', 'missing_id',
+'missing id, id card lost, lost id, lost id card, id lost, duplicate id, duplicate id card, id card procedure, missing id procedure',
+'Missing ID Card Procedure:
+1. Inform Class Incharge and HOD
+2. Give a letter to the department
+3. Submit it to the Admin Office
+4. Pay Rs.250 for reissue
+5. New ID card will be issued within 1 week'),
+
+(10, 3, 'Tamil', 'missing_id',
+'மிஸ்ஸிங் ஐடி, அடையாள அட்டை தொலைந்தது, id card காணவில்லை',
+'ID Card காணாமல் போனால்:
+1. Class Incharge மற்றும் HOD-க்கு தகவல் சொல்ல வேண்டும்
+2. துறைக்கு கடிதம் தர வேண்டும்
+3. Admin Office-ல் சமர்ப்பிக்க வேண்டும்
+4. ரூ.250 கட்டணம் செலுத்த வேண்டும்
+5. புதிய ID card ஒரு வாரத்தில் கிடைக்கும்'),
+
+-- Exam eligibility
+(11, 6, 'English', 'exam_eligibility',
+'write exam, exam procedure, exam eligibility, eligible to write exam, can i write exam, how to write exam, can i attend exam with low attendance',
+'To write the exam, students must generally maintain the required attendance. If attendance is 75% or above, they are eligible. If it is between 65% and 74%, condonation may apply based on college rules.'),
+
+(12, 6, 'Tamil', 'exam_eligibility',
+'exam எழுத, exam eligibility, தேர்வு எழுதலாமா',
+'தேர்வு எழுத மாணவர்கள் தேவையான attendance வைத்திருக்க வேண்டும். 75% மற்றும் அதற்கு மேல் இருந்தால் தேர்வு எழுதலாம். 65% முதல் 74% வரை இருந்தால் condonation விதிமுறை பொருந்தலாம்.'),
+
+-- TC discontinued
+(13, 4, 'English', 'tc_discontinued',
+'tc discontinued, tc for discontinued, discontinued tc, dropout tc, left course tc',
+'Transfer Certificate Procedure (Discontinued Students):
+
+1. Inform your department
+2. Submit written request for TC
+3. Complete clearance process
+4. Collect TC from Admin Office'),
+
+(14, 4, 'Tamil', 'tc_discontinued',
+'படிப்பை நிறுத்தினால் tc, discontinued tc, dropout tc, transfer certificate',
+'படிப்பை நிறுத்திய மாணவர்களுக்கான TC நடைமுறை:
+1. துறைக்கு தகவல் தெரிவிக்க வேண்டும்
+2. TC பெற விண்ணப்பம் எழுத வேண்டும்
+3. தேவையான clearance முடிக்க வேண்டும்
+4. Admin Office மூலம் Transfer Certificate பெறலாம்'),
+
+-- General bonafide
+(15, 4, 'English', 'bonafide_general',
+'general bonafide certificate, general bonafide, student bonafide',
+'General Bonafide Certificate:
+
+This certificate is used as proof that you are a student of the college.
+
+Bonafide Certificate Procedure:
+1. Go to the department and collect the bonafide form.
+2. Fill in the required details.
+3. Get seal from the department and union.
+4. Submit the form to the admin office.'),
+
+-- Course bonafide
+(16, 4, 'English', 'course_bonafide',
+'course bonafide',
+'Course Bonafide:
+
+This certificate is used for course-related verification.
+
+Procedure:
+1. Visit the Admin Office
+2. Submit the request
+3. Complete the required verification
+4. Collect the certificate after processing'),
+
+-- Passport bonafide
+(17, 4, 'English', 'passport_bonafide',
+'passport bonafide',
+'Passport Bonafide:
+
+This certificate is required for passport process.
+
+Procedure:
+1. Visit the Admin Office
+2. Submit the request
+3. Complete the verification process
+4. Pay the required fee
+5. Collect the certificate after processing
+
+Fee: Rs.50'),
+
+-- Bonafide without fee
+(18, 4, 'English', 'bonafide_without_fee',
+'bonafide without fee, bonafide without fee payment, no fee bonafide',
+'Bonafide Without Fee Payment:
+
+This bonafide can be requested without fee payment only with special permission.
+
+Procedure:
+1. Visit the Admin Office
+2. Explain the reason for request
+3. Get approval from the higher authority
+4. Submit the required form
+5. Collect the certificate after approval'),
+
+-- Condonation fee
+(19, 6, 'English', 'attendance_condonation_fee',
+'condonation fee, attendance condonation fee, low attendance fee, fee for attendance shortage',
+'Students with attendance between 65% and 74% must pay a condonation fee of Rs.250.'),
+
+(20, 6, 'Tamil', 'attendance_condonation_fee',
+'condonation fee, attendance fee, அபராத கட்டணம், attendance குறைவு fee',
+'65% முதல் 74% வரை attendance உள்ளவர்கள் ரூ.250 condonation fee செலுத்த வேண்டும்.'),
+
+-- Marksheet lost
+(21, 4, 'English', 'marksheet_lost',
+'marksheet lost, lost marksheet, my marksheet is lost, certificate lost',
+'If your marksheet is lost, you can apply for a duplicate certificate. Charges depend on the year gap:
+1 year gap: Rs.1000
+2 year gap: Rs.2000
+3 year gap: Rs.3000
+4 year gap: Rs.4000
+5 year gap: Rs.5000'),
+
+(22, 4, 'Tamil', 'marksheet_lost',
+'மார்க்ஷீட் தொலைந்தது, marksheet lost, certificate lost',
+'மார்க்ஷீட் தொலைந்தால் duplicate certificateக்கு விண்ணப்பிக்கலாம். ஆண்டு இடைவெளிக்கு ஏற்ப கட்டணம் மாறும்.');
+
+-- =========================
+-- 3. POLICIES
+-- =========================
 CREATE TABLE policies (
     policy_id INT AUTO_INCREMENT PRIMARY KEY,
     module_id INT NOT NULL,
@@ -65,179 +274,17 @@ CREATE TABLE policies (
     FOREIGN KEY (module_id) REFERENCES modules(module_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- =========================
--- 4. GREETING INTENTS
--- =========================
-INSERT INTO chatbot_intents (module_id, language, keywords, user_question, response) VALUES
-(1, 'English',
-'hi hello hey good morning good afternoon good evening',
-'Greeting',
-'👋 Welcome to SDNB ASKNOVA. I am your service assistant. How can I help you today?'),
-
-(1, 'Tamil',
-'வணக்கம் ஹாய் ஹலோ காலை வணக்கம் மாலை வணக்கம்',
-'வாழ்த்து',
-'👋 எஸ்டிஎன்பி ASKNOVA-க்கு வரவேற்கிறோம். நான் உங்கள் சேவை உதவியாளர். உங்கள் கேள்விகளுக்கு உதவ தயாராக உள்ளேன்.');
+INSERT INTO policies (policy_id, module_id, language, policy_title, policy_description, value_numeric, value_text, fine_applicable, installment_allowed) VALUES
+(1, 2, 'English', 'Late Fee', 'Fine applicable after due date', NULL, 'Fine Applicable', TRUE, TRUE),
+(2, 2, 'Tamil', 'தாமத கட்டணம்', 'கட்டணத்தின் கடைசி தேதிக்குப் பிறகு அபராதம் விதிக்கப்படலாம்.', NULL, 'அபராதம் பொருந்தும்', TRUE, TRUE),
+(3, 3, 'English', 'Medical Leave', 'Medical certificate required', NULL, 'Medical Certificate Required', FALSE, FALSE),
+(4, 3, 'Tamil', 'மருத்துவ விடுப்பு', 'மருத்துவச் சான்றிதழ் துறைக்கு சமர்ப்பிக்க வேண்டும்.', NULL, 'மருத்துவச் சான்றிதழ் அவசியம்', FALSE, FALSE),
+(5, 4, 'English', 'Transfer Certificate', 'Students must complete department and office clearance before receiving TC.', NULL, 'Clearance Required', FALSE, FALSE),
+(6, 4, 'Tamil', 'மாற்றுச் சான்றிதழ்', 'TC பெற துறை மற்றும் அலுவலக clearance முடிக்க வேண்டும்.', NULL, 'Clearance அவசியம்', FALSE, FALSE);
 
 -- =========================
--- 5. OUTPASS
+-- 4. ATTENDANCE CATEGORIES
 -- =========================
-INSERT INTO chatbot_intents (module_id, language, keywords, user_question, response) VALUES
-(3, 'English',
-'outpass out pass gate pass leave campus outpass procedure permission',
-'What is the outpass procedure?',
-'Outpass Procedure:
-1. Get permission from your Class Incharge.
-2. Get approval from the HOD.
-3. Then only you can leave the campus.'),
-
-(3, 'Tamil',
-'அவுட்பாஸ் outpass gate pass வெளியே போக அனுமதி அவுட்பாஸ் நடைமுறை',
-'அவுட்பாஸ் எப்படிப் பெறுவது?',
-'அவுட்பாஸ் பெறும் நடைமுறை:
-1. முதலில் உங்கள் Class Incharge-ிடம் அனுமதி பெற வேண்டும்.
-2. அதன் பிறகு HOD-ிடம் அனுமதி பெற வேண்டும்.
-3. அனுமதி பெற்ற பிறகே கல்லூரி வளாகத்தை விட்டு வெளியே செல்லலாம்.');
-
--- =========================
--- 6. BONAFIDE CERTIFICATE
--- =========================
-INSERT INTO chatbot_intents (module_id, language, keywords, user_question, response) VALUES
-(4, 'English',
-'bonafide bonafide certificate student certificate bonafide apply bonafide procedure',
-'How to apply for Bonafide Certificate?',
-'Bonafide Certificate Procedure:
-1. Go to the department and collect the bonafide form.
-2. Fill in the required details.
-3. Get seal from the department and union.
-4. Submit the form to the admin office.'),
-
-(4, 'Tamil',
-'போனாபைடு bonafide bonafide certificate மாணவர் சான்று போனாபைடு நடைமுறை',
-'போனாபைடு சான்றிதழ் எப்படிப் பெறுவது?',
-'போனாபைடு சான்றிதழ் பெறும் நடைமுறை:
-1. துறைக்கு சென்று Bonafide form வாங்க வேண்டும்.
-2. தேவையான விவரங்களை நிரப்ப வேண்டும்.
-3. துறை முத்திரை மற்றும் Union seal பெற வேண்டும்.
-4. பின்னர் அதை Admin Office-க்கு சமர்ப்பிக்க வேண்டும்.');
-
--- =========================
--- 7. FEES DETAILS
--- =========================
-INSERT INTO chatbot_intents (module_id, language, keywords, user_question, response) VALUES
-(2, 'English',
-'fees fee payment fees details college fees installment',
-'How to check fees details?',
-'Students can check the fee details through the accounts office or the college portal.'),
-
-(2, 'Tamil',
-'கட்டணம் fees fee payment fees details கல்லூரி கட்டணம்',
-'கட்டண விவரங்களை எப்படி தெரிந்து கொள்ளலாம்?',
-'மாணவர்கள் கட்டண விவரங்களை Accounts Office அல்லது College Portal மூலம் தெரிந்து கொள்ளலாம்.');
-
--- =========================
--- 8. MISSING ID CARD
--- =========================
-INSERT INTO chatbot_intents (module_id, language, keywords, user_question, response) VALUES
-(3, 'English',
-'missing id card lost id card reissue id card id card procedure',
-'What to do if ID card is missing?',
-'Missing ID Card Procedure:
-1. Inform your Class Incharge and HOD.
-2. Give a letter to the department.
-3. Submit the letter to the Admin Office.
-4. Pay Rs.250 for reissue.
-5. The new ID card will be issued within 1 week.
-6. Until then, show the letter to the gate staff.'),
-
-(3, 'Tamil',
-'id card காணாமல் போனது missing id card lost id card id card இல்லாமல் id card நடைமுறை',
-'ID Card காணாமல் போனால் என்ன செய்ய வேண்டும்?',
-'ID Card காணாமல் போனால் செய்ய வேண்டியது:
-1. முதலில் Class Incharge மற்றும் HOD-க்கு தகவல் சொல்ல வேண்டும்.
-2. துறைக்கு ஒரு கடிதம் கொடுக்க வேண்டும்.
-3. அந்த கடிதத்தை Admin Office-க்கு சமர்ப்பிக்க வேண்டும்.
-4. ரூ.250 கட்டணம் செலுத்த வேண்டும்.
-5. புதிய ID Card ஒரு வாரத்தில் வழங்கப்படும்.
-6. அந்த ஒரு வாரம் Gate Staff-க்கு அந்த கடிதத்தை காட்ட வேண்டும்.');
-
--- =========================
--- 9. TC - PASS OUT
--- =========================
-INSERT INTO chatbot_intents (module_id, language, keywords, user_question, response) VALUES
-(4, 'English',
-'tc transfer certificate passout pass out course completed tc procedure',
-'How to get TC after course completion?',
-'Transfer Certificate Procedure for Pass Out Students:
-1. Go to your department.
-2. Submit the application.
-3. Get HOD signature.
-4. Complete office clearance.
-5. Collect the Transfer Certificate.'),
-
-(4, 'Tamil',
-'படிப்பு முடிந்த பிறகு tc passout tc transfer certificate',
-'படிப்பு முடிந்த பிறகு TC எப்படி பெறுவது?',
-'படிப்பு முடித்த மாணவர்களுக்கான TC நடைமுறை:
-1. துறைக்கு சென்று விண்ணப்பம் எழுத வேண்டும்.
-2. HOD கையொப்பம் பெற வேண்டும்.
-3. Office-ல் clearance முடிக்க வேண்டும்.
-4. அதன் பிறகு Transfer Certificate வழங்கப்படும்.');
-
--- =========================
--- 10. TC - DISCONTINUED
--- =========================
-INSERT INTO chatbot_intents (module_id, language, keywords, user_question, response) VALUES
-(4, 'English',
-'tc discontinue discontinued transfer certificate left course dropout tc',
-'How to get TC if course is discontinued?',
-'Transfer Certificate Procedure for Discontinued Students:
-1. Inform the department.
-2. Submit a written application for TC.
-3. Complete the required clearance.
-4. Collect the Transfer Certificate from the office.'),
-
-(4, 'Tamil',
-'படிப்பை நிறுத்தினால் tc discontinued tc transfer certificate',
-'படிப்பை நிறுத்தினால் TC எப்படி பெறுவது?',
-'படிப்பை நிறுத்திய மாணவர்களுக்கான TC நடைமுறை:
-1. துறைக்கு தகவல் தெரிவிக்க வேண்டும்.
-2. TC பெற விண்ணப்பம் எழுத வேண்டும்.
-3. தேவையான clearance முடிக்க வேண்டும்.
-4. Admin Office மூலம் Transfer Certificate பெறலாம்.');
-
--- =========================
--- 11. LONG ABSENTEES
--- =========================
-INSERT INTO chatbot_intents (module_id, language, keywords, user_question, response) VALUES
-(3, 'English',
-'long absence long absentees absent many days attendance shortage',
-'What is the procedure for long absentees?',
-'Students who are absent for a long period must inform the department and contact the admin office for further guidance.'),
-
-(3, 'Tamil',
-'நீண்ட நாட்கள் வராத மாணவர்கள் long absence long absentees attendance shortage',
-'நீண்ட நாட்கள் வராத மாணவர்கள் என்ன செய்ய வேண்டும்?',
-'நீண்ட நாட்கள் வராத மாணவர்கள்:
-1. Class Incharge மற்றும் HOD-க்கு தகவல் தெரிவிக்க வேண்டும்.
-2. வராததற்கான காரணத்தை விளக்க வேண்டும்.
-3. தேவையானால் Admin Office-ஐ தொடர்பு கொள்ள வேண்டும்.');
-
--- =========================
--- 12. SAMPLE POLICIES
--- =========================
-INSERT INTO policies
-(module_id, language, policy_title, policy_description, value_numeric, value_text, fine_applicable, installment_allowed)
-VALUES
-(2, 'English', 'Late Fee Payment', 'Fine may be applicable after the fee due date.', NULL, 'Fine Applicable', TRUE, TRUE),
-(2, 'Tamil', 'தாமத கட்டணம்', 'கட்டணத்தின் கடைசி தேதிக்குப் பிறகு அபராதம் விதிக்கப்படலாம்.', NULL, 'அபராதம் பொருந்தும்', TRUE, TRUE),
-
-(3, 'English', 'Medical Leave', 'Medical certificate must be submitted to the department.', NULL, 'Medical Certificate Required', FALSE, FALSE),
-(3, 'Tamil', 'மருத்துவ விடுப்பு', 'மருத்துவச் சான்றிதழ் துறைக்கு சமர்ப்பிக்க வேண்டும்.', NULL, 'மருத்துவச் சான்றிதழ் அவசியம்', FALSE, FALSE),
-
-(4, 'English', 'Transfer Certificate', 'Students must complete department and office clearance before receiving TC.', NULL, 'Clearance Required', FALSE, FALSE),
-(4, 'Tamil', 'மாற்றுச் சான்றிதழ்', 'TC பெற துறை மற்றும் அலுவலக clearance முடிக்க வேண்டும்.', NULL, 'Clearance அவசியம்', FALSE, FALSE);
-
 CREATE TABLE attendance_categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     category_code VARCHAR(5) NOT NULL,
@@ -246,110 +293,78 @@ CREATE TABLE attendance_categories (
     language VARCHAR(20) NOT NULL,
     title VARCHAR(255) NOT NULL,
     response TEXT NOT NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE IF NOT EXISTS modules (
-    module_id INT AUTO_INCREMENT PRIMARY KEY,
-    module_name VARCHAR(100) NOT NULL UNIQUE
-);
+INSERT INTO attendance_categories (id, category_code, min_percent, max_percent, language, title, response) VALUES
+(1, 'A', 75, 100, 'English', 'Category A', 'Eligible for exams'),
+(2, 'B', 65, 74, 'English', 'Category B', 'Condonation fee Rs.250'),
+(3, 'C', 50, 64, 'English', 'Category C', 'Not allowed exam'),
+(4, 'D', 1, 49, 'English', 'Category D', 'Repeat course'),
+(5, 'E', 0, 0, 'English', 'Category E', 'Rejoin required'),
+(6, 'A', 75, 100, 'Tamil', 'வகை A', 'தேர்வு எழுத தகுதி உள்ளது'),
+(7, 'B', 65, 74, 'Tamil', 'வகை B', 'ரூ.250 condonation fee செலுத்த வேண்டும்'),
+(8, 'C', 50, 64, 'Tamil', 'வகை C', 'தேர்வு எழுத அனுமதி இல்லை'),
+(9, 'D', 1, 49, 'Tamil', 'வகை D', 'Course மீண்டும் படிக்க வேண்டும்'),
+(10, 'E', 0, 0, 'Tamil', 'வகை E', 'மீண்டும் சேர வேண்டும்');
 
-ALTER TABLE chatbot_intents
-ADD COLUMN intent_name VARCHAR(100) NOT NULL AFTER language;
+-- =========================
+-- 5. STUDENT REQUESTS
+-- =========================
+CREATE TABLE student_requests (
+    id INT PRIMARY KEY,
+    topic VARCHAR(255),
+    year_of_discontinuation VARCHAR(50),
+    reason VARCHAR(100),
+    purpose TEXT,
+    year_gap INT,
+    amount DECIMAL(10,2),
+    notes TEXT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO student_requests (id, topic, year_of_discontinuation, reason, purpose, year_gap, amount, notes) VALUES
+(1, 'Dropout', 'Mention year', 'Marriage / Others', 'Specify purpose', NULL, NULL, 'All details required'),
+(2, 'Medium of Instruction (MOI)', NULL, NULL, 'For job/higher studies', NULL, 1000.00, 'Charges applicable'),
+(3, 'Missing TC / Marksheets', NULL, NULL, 'Request for duplicate certificates', 1, 1000.00, '1 year gap'),
+(4, 'Missing TC / Marksheets', NULL, NULL, 'Request for duplicate certificates', 2, 2000.00, '2 year gap'),
+(5, 'Missing TC / Marksheets', NULL, NULL, 'Request for duplicate certificates', 3, 3000.00, '3 year gap'),
+(6, 'Missing TC / Marksheets', NULL, NULL, 'Request for duplicate certificates', 4, 4000.00, '4 year gap'),
+(7, 'Missing TC / Marksheets', NULL, NULL, 'Request for duplicate certificates', 5, 5000.00, '5 year gap'),
+(8, 'Missing TC / Marksheets', NULL, NULL, 'Not applicable after 5 years gap', NULL, NULL, 'Service not available if gap > 5 years'),
+(9, 'Bonafide Certificate (Passed Out Student)', NULL, NULL, 'Proof of being a student', NULL, 200.00, NULL),
+(10, 'Genuineness Certificate', NULL, NULL, 'Certificate verification', NULL, 500.00, NULL),
+(11, 'Disability Student Exemption', NULL, NULL, 'Request for exemption', NULL, NULL, 'Submit proof for approval');
 
-INSERT INTO modules (module_name)
-VALUES ('Attendance')
-ON DUPLICATE KEY UPDATE module_name = module_name;
+-- =========================
+-- 6. ADMIN SERVICES
+-- =========================
+CREATE TABLE admin_services (
+    id INT PRIMARY KEY,
+    service_name VARCHAR(255),
+    issued_by VARCHAR(100),
+    purpose TEXT,
+    requirements TEXT,
+    fees DECIMAL(10,2),
+    notes TEXT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO attendance_categories (category_code, min_percent, max_percent, language, title, response)
-VALUES
-('A', 75, 100, 'English', 'Category A', 'Minimum attendance required is 75%. Students with 75% and above are eligible to write exams without condonation.'),
-('B', 65, 74, 'English', 'Category B', 'Students with attendance between 65% and 74% must pay a condonation fee of Rs.250. Theory and practical may be treated separately.'),
-('C', 50, 64, 'English', 'Category C', 'Students with attendance between 50% and 64% are not permitted to appear for the regular examination. They may be allowed to take the next examination as per rules.'),
-('D', 1, 49, 'English', 'Category D', 'Students with attendance between 1% and 49% must repeat the course by rejoining. University permission is required.'),
-('E', 0, 0, 'English', 'Category E', 'Students with 0% attendance must repeat the course immediately by rejoining with prior University permission.');
+INSERT INTO admin_services (id, service_name, issued_by, purpose, requirements, fees, notes) VALUES
+(1, 'Bonafide Certificate', 'Admin Office', 'Proof of student status', 'Request form submission', NULL, 'Basic verification'),
+(2, 'Fee Structure Certificate', 'Admin Office', 'Provides annual fee details', 'Request form submission', NULL, 'Proof required'),
+(3, 'Scholarship Form', 'Admin Office', 'Apply for scholarship', 'Approval from admin/team', NULL, 'Verification needed'),
+(4, 'Course Bonafide', 'Admin Office', 'Course-related verification', 'Request submission', NULL, NULL),
+(5, 'Student Outpass', 'Admin Office', 'Permission to leave campus', 'Student request', NULL, 'Maintain proper proof'),
+(6, 'Passport Bonafide', 'Admin Office', 'Required for passport process', 'Request submission', 50.00, 'Added in exam fees'),
+(7, 'Medium of Instruction', 'Admin Office', 'Certificate stating language (English)', 'Request submission', NULL, NULL),
+(8, 'Attendance Certificate', 'Admin Office', 'Proof of previous semester attendance', 'Record verification', NULL, NULL),
+(9, 'First Graduation Certificate', 'Admin Office', 'Proof of first graduate status', 'Submit declaration if not available', NULL, 'Alternative proof accepted'),
+(10, 'Napkin Service', 'College Facility', 'Sanitary napkin availability', 'Token system', 0.00, 'No charges'),
+(11, 'Subsidized Food', 'Canteen', 'Affordable student meal', 'Token required', 10.00, 'Includes sambar rice, pickle, vegetables'),
+(12, 'Complaint Service', 'Union/Admin Office', 'Report issues or complaints', NULL, NULL, 'Students can complain if issues arise'),
+(13, 'Missing Items Report', 'Admin/Union Office', 'Report lost items', 'Submit complaint', NULL, 'Recorded as Missed Note'),
+(14, 'Lost ID Card', 'Admin Office', 'Reissue ID card', 'Apply with details', 250.00, 'Bonafide required'),
+(15, 'Bonafide Without Fee Payment', 'Admin Office', 'Request bonafide without paying fees', 'Special permission required', NULL, 'Approval needed'),
+(16, 'Single Parent Support', 'Admin / Staff', 'Support for single parent students', 'Proof required', NULL, 'Staff approval needed'),
+(17, 'Continuous Study / Discontinuation', 'Admin Office', 'Discontinue and resume study', 'Request submission', NULL, 'No break allowed'),
+(18, 'Physically Challenged Support', 'Admin Office / COE', 'Support for physically challenged students', 'Medical proof + COE permission', NULL, 'HOD letter required');
 
-INSERT INTO attendance_categories (category_code, min_percent, max_percent, language, title, response)
-VALUES
-('A', 75, 100, 'Tamil', 'வகை A', 'குறைந்தபட்ச attendance 75% ஆகும். 75% மற்றும் அதற்கு மேல் உள்ளவர்கள் எந்த condonation fee இல்லாமல் தேர்வு எழுதலாம்.'),
-('B', 65, 74, 'Tamil', 'வகை B', '65% முதல் 74% வரை attendance உள்ளவர்கள் ரூ.250 condonation fee செலுத்த வேண்டும். Theory மற்றும் practical தனித்தனியாக இருக்கலாம்.'),
-('C', 50, 64, 'Tamil', 'வகை C', '50% முதல் 64% வரை attendance உள்ளவர்கள் regular தேர்வில் எழுத அனுமதிக்கப்படமாட்டார்கள். விதிமுறைகளின்படி அடுத்த தேர்வில் எழுத அனுமதி கிடைக்கலாம்.'),
-('D', 1, 49, 'Tamil', 'வகை D', '1% முதல் 49% வரை attendance உள்ளவர்கள் course-ஐ மீண்டும் join செய்து படிக்க வேண்டும். University அனுமதி அவசியம்.'),
-('E', 0, 0, 'Tamil', 'வகை E', '0% attendance உள்ளவர்கள் course-ஐ உடனடியாக மீண்டும் join செய்ய வேண்டும். University முன் அனுமதி பெற வேண்டும்.');
-
-INSERT INTO chatbot_intents (module_id, language, intent_name, keywords, response)
-VALUES
-(
-    (SELECT module_id FROM modules WHERE module_name='Attendance'),
-    'English',
-    'minimum_attendance',
-    'minimum attendance,required attendance,least attendance,attendance minimum',
-    'Minimum attendance required is 75%.'
-),
-(
-    (SELECT module_id FROM modules WHERE module_name='Attendance'),
-    'English',
-    'attendance_condonation_fee',
-    'condonation fee,attendance fee,low attendance fee,fee for attendance shortage',
-    'Students with attendance between 65% and 74% must pay a condonation fee of Rs.250.'
-),
-(
-    (SELECT module_id FROM modules WHERE module_name='Attendance'),
-    'English',
-    'attendance_rules_full',
-    'attendance rules,attendance eligibility,eligibility norms,full attendance details',
-    'FULL_RULES'
-),
-(
-    (SELECT module_id FROM modules WHERE module_name='Attendance'),
-    'English',
-    'attendance_zero',
-    '0 attendance,zero attendance,no attendance',
-    'Students with 0% attendance must repeat the course immediately by rejoining with prior University permission.'
-),
-(
-    (SELECT module_id FROM modules WHERE module_name='Attendance'),
-    'English',
-    'attendance_below_49',
-    'below 49 attendance,less attendance,repeat course,1 to 49 attendance',
-    'Students with attendance between 1% and 49% must repeat the course by rejoining. University permission is required.'
-);
-
-INSERT INTO chatbot_intents (module_id, language, intent_name, keywords, response)
-VALUES
-(
-    (SELECT module_id FROM modules WHERE module_name='Attendance'),
-    'Tamil',
-    'minimum_attendance',
-    'குறைந்தபட்ச attendance,minimum attendance tamil,தேவையான attendance,attendance எவ்வளவு வேண்டும்',
-    'குறைந்தபட்ச attendance 75% ஆகும்.'
-),
-(
-    (SELECT module_id FROM modules WHERE module_name='Attendance'),
-    'Tamil',
-    'attendance_condonation_fee',
-    'condonation fee,attendance fee,அபராத கட்டணம்,attendance குறைவு fee',
-    '65% முதல் 74% வரை attendance உள்ளவர்கள் ரூ.250 condonation fee செலுத்த வேண்டும்.'
-),
-(
-    (SELECT module_id FROM modules WHERE module_name='Attendance'),
-    'Tamil',
-    'attendance_rules_full',
-    'attendance rules,வருகை விதிமுறை,attendance eligibility,முழு attendance விவரம்',
-    'FULL_RULES'
-),
-(
-    (SELECT module_id FROM modules WHERE module_name='Attendance'),
-    'Tamil',
-    'attendance_zero',
-    '0 attendance,zero attendance,attendance இல்லை',
-    '0% attendance உள்ளவர்கள் course-ஐ உடனடியாக மீண்டும் join செய்ய வேண்டும். University முன் அனுமதி பெற வேண்டும்.'
-),
-(
-    (SELECT module_id FROM modules WHERE module_name='Attendance'),
-    'Tamil',
-    'attendance_below_49',
-    '49 க்கும் குறைவான attendance,repeat course,குறைந்த attendance',
-    '1% முதல் 49% வரை attendance உள்ளவர்கள் course-ஐ மீண்டும் join செய்து படிக்க வேண்டும். University அனுமதி அவசியம்.'
-);
 
