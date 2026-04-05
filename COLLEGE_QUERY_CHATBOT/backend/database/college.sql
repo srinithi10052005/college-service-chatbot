@@ -368,3 +368,68 @@ INSERT INTO admin_services (id, service_name, issued_by, purpose, requirements, 
 (18, 'Physically Challenged Support', 'Admin Office / COE', 'Support for physically challenged students', 'Medical proof + COE permission', NULL, 'HOD letter required');
 
 
+-- =============================================
+-- STEP 1: Add dropout_reasons table
+-- Run this in phpMyAdmin > college_db > SQL
+-- =============================================
+
+CREATE TABLE IF NOT EXISTS dropout_reasons (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category VARCHAR(100) NOT NULL,
+    reason_code VARCHAR(10) NOT NULL UNIQUE,
+    reason_text VARCHAR(255) NOT NULL,
+    reason_tamil VARCHAR(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO dropout_reasons (category, reason_code, reason_text, reason_tamil) VALUES
+
+-- Academic
+('Academic', 'AC01', 'Failed in exams repeatedly',         'தேர்வில் திரும்பவும் தோல்வி'),
+('Academic', 'AC02', 'Unable to cope with studies',        'படிப்பை தொடர முடியவில்லை'),
+('Academic', 'AC03', 'Change of course or institution',    'வேறு படிப்பு / கல்லூரிக்கு மாறுதல்'),
+('Academic', 'AC04', 'Transferred to another college',     'வேறு கல்லூரிக்கு இடமாற்றம்'),
+
+-- Personal / Family
+('Personal', 'PE01', 'Marriage',                           'திருமணம்'),
+('Personal', 'PE02', 'Family responsibilities',            'குடும்ப பொறுப்புகள்'),
+('Personal', 'PE03', 'Death of a parent or family member', 'குடும்பத்தினர் இறப்பு'),
+('Personal', 'PE04', 'Relocation to another city or state','வேறு நகரம் / மாநிலத்திற்கு இடம் மாறுதல்'),
+
+-- Financial
+('Financial', 'FI01', 'Unable to pay fees',               'கட்டணம் செலுத்த இயலவில்லை'),
+('Financial', 'FI02', 'Financial hardship or family income loss', 'நிதி சிரமம்'),
+('Financial', 'FI03', 'Need to work to support family',   'குடும்பத்தை ஆதரிக்க வேலைக்கு செல்வது'),
+
+-- Health
+('Health',    'HE01', 'Long-term medical illness',         'நீண்ட நாள் நோய்'),
+('Health',    'HE02', 'Mental health issues',              'மன நலப் பிரச்சினை'),
+('Health',    'HE03', 'Physical disability or accident',   'உடல் ஊனம் / விபத்து'),
+
+-- Career / Opportunity
+('Career',    'CA01', 'Got a job',                         'வேலை கிடைத்தது'),
+('Career',    'CA02', 'Pursuing competitive exams (UPSC/TNPSC)', 'போட்டித் தேர்வுகளுக்கு படிக்கிறேன்'),
+('Career',    'CA03', 'Started own business',              'சொந்த தொழில் தொடங்கியது'),
+('Career',    'CA04', 'Selected in armed forces or government service', 'அரசு / ராணுவ சேவையில் சேர்ந்தது'),
+
+-- Other
+('Other',     'OT01', 'Personal reasons',                  'தனிப்பட்ட காரணம்'),
+('Other',     'OT02', 'Others',                            'மற்றவை');
+
+
+-- =============================================
+-- STEP 2: Update student_requests dropout row
+-- =============================================
+
+UPDATE student_requests
+SET reason = 'See dropdown: AC01-OT02'
+WHERE topic = 'Dropout';
+
+
+-- =============================================
+-- VERIFY: Check the new table
+-- =============================================
+
+SELECT category, reason_code, reason_text, reason_tamil
+FROM dropout_reasons
+ORDER BY category, reason_code;
+
