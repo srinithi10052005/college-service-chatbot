@@ -1,9 +1,7 @@
 CREATE DATABASE IF NOT EXISTS college_db
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_general_ci;
-
 USE college_db;
-
 SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS admin_services;
@@ -48,565 +46,47 @@ CREATE TABLE chatbot_intents (
     FOREIGN KEY (module_id) REFERENCES modules(module_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO chatbot_intents (intent_id, module_id, language, intent_name, keywords, response, processing_time, fees, office_location) VALUES
+INSERT INTO chatbot_intents (intent_id, module_id, language, intent_name, keywords, response, processing_time, fees, office_location) 
+VALUES 
+(1, 1, 'English', 'greeting', 'hi, hello, hey, good morning, good afternoon, good evening', '👋 Welcome to SDNB ASKNOVA. I am your service assistant. How can I help you today?', NULL, NULL, NULL),
+    
+(2, 1, 'Tamil', 'greeting', 'வணக்கம், ஹாய், ஹலோ, காலை வணக்கம், மாலை வணக்கம்', '👋 எஸ்டிஎன்பி ASKNOVA-க்கு வரவேற்கிறோம். நான் உங்கள் சேவை உதவியாளர். உங்கள் கேள்விகளுக்கு உதவ தயாராக உள்ளேன்.', NULL, NULL, NULL),
+    
+(3, 3, 'English', 'outpass', 'outpass, out pass, gate pass, leave permission', '📋 Outpass Procedure (Processing Time: 2-4 hours):\n1. Visit Class Incharge\n2. Get HOD permission\n3. Visit Admin Office\n📞 Contact: Admin Office', '2-4 hours', NULL, 'Admin Office, Main Building, Ground Floor'),
 
--- Greeting
-(1, 1, 'English', 'greeting',
-'hi, hello, hey, good morning, good afternoon, good evening',
-'👋 Welcome to SDNB ASKNOVA. I am your service assistant. How can I help you today?',
-NULL, NULL, NULL),
+(4, 3, 'Tamil', 'outpass', 'அவுட்பாஸ், வெளியே செல்ல அனுமதி', '📋 அவுட்பாஸ் நடைமுறை:\n1. Class Incharge-ஐ சந்தியுங்கள்\n2. HOD அனுமதி பெறுங்கள்\n3. Admin Office-ற்குச் செல்லுங்கள்\n📞 தொடர்பு: Admin Office', '2-4 மணிநேரம்', NULL, 'Admin Office, முதன்மை கட்டடம், தாழ்வாரம்'),
 
-(2, 1, 'Tamil', 'greeting',
-'வணக்கம், ஹாய், ஹலோ, காலை வணக்கம், மாலை வணக்கம்',
-'👋 எஸ்டிஎன்பி ASKNOVA-க்கு வரவேற்கிறோம். நான் உங்கள் சேவை உதவியாளர். உங்கள் கேள்விகளுக்கு உதவ தயாராக உள்ளேன்.',
-NULL, NULL, NULL),
+(5, 4, 'English', 'bonafide', 'bonafide', '📜 There are multiple Bonafide Certificates available:\n1. **General** (Free)\n2. **Course** (Free)\n3. **Passport** (₹50)\n👉 Type the specific certificate you need.\n📍 Location: Admin Office\n⏰ Timings: Mon-Fri, 9:00 AM\n📞 Contact: Evening Office', NULL, NULL, 'Admin Office, Main Building, Ground Floor'),
 
--- Outpass
-(3, 3, 'English', 'outpass',
-'outpass, out pass, how to get outpass, outpass procedure, gate pass, leave permission, campus leave, permission to leave, permission to go outside, campus exit permission, go outside permission, exit campus',
-'📋 Outpass Procedure (Processing Time: 2-4 hours):
-1. Visit your Class Incharge in your department
-2. Get written permission from HOD 
-3. Visit Admin Office (Main Building(IT Block), Ground Floor) with approval letter
-4. Enter your details in the outpass register with time OUT and IN
-5. Show the outpass at the main gate to security personnel
-6. Return the outpass to Admin Office upon return to campus
-📞 Contact: Admin Office - Evening Office (Mon-Fri, 9:00 AM - 4:30 PM)',
-'2-4 hours', NULL, 'Admin Office, Main Building, Ground Floor'),
+(6, 4, 'Tamil', 'bonafide', 'போனாபைடு', '📜 பல வகையான Bonafide Certificates உள்ளன:\n1. **General** (இலவசம்)\n2. **Course** (இலவசம்)\n3. **Passport** (₹50)\n👉 தேவையான சான்றிதழை குறிப்பிடுங்கள்.\n📍 இடம்: Admin Office\n⏰ நேரம்: 9:00 AM - 4:30 PM', NULL, NULL, 'Admin Office, Main Building (IT Block), Ground Floor'),
 
-(4, 3, 'Tamil', 'outpass',
-'அவுட்பாஸ், வெளியே செல்ல அனுமதி, outpass procedure',
-'📋 அவுட்பாஸ் நடைமுறை 
-1. முதலில் உங்கள் Class Incharge-ஐ உங்கள் துறையில் சந்தியுங்கள்
-2. HOD-ஐ தொடர்புகொண்டு அனுமதிப்பத்திரம் பெறுங்கள் (அலுவலகம்: துறை ப்ளாக், 2வது மாடி)
-3. அனுமதிப்பத்திரத்துடன் Admin Office-ற்குச் செல்லுங்கள் (முதன்மை கட்டடம், தாழ்வாரம்)
-4. அவுட்பாஸ் பதிவேட்டில் நுழைந்த நேரம் மற்றும் வெளியேறிய நேரம் பதிவு செய்யுங்கள்
-5. பாதுகாப்பாளரிடம் முதன்மை வாயிலில் அவுட்பாஸ் காட்டுங்கள்
-6. வெளியேறுவதற்கு முன் Admin Office-ற்கு அவுட்பாஸ் திருப்பி அளியுங்கள்
-📞 தொடர்பு: Admin Office -Evening Office (திங்கட்கிழமை-வெள்ளிக்கிழமை, 9:00 AM - 4:30 PM)',
-'2-4 மணிநேரம்', NULL, 'Admin Office, முதன்மை கட்டடம், தாழ்வாரம்'),
+(7, 4, 'English', 'tc_procedure', 'tc, transfer certificate', '📋 Transfer Certificate Procedure (Pass Out Students)\nProcessing Time: 7-10 working days\n1. Visit Dept Office\n2. Get HOD signature\n3. Library Clearance\n📍 Library: GB Block, 1st Floor', '7-10 working days', NULL, 'Admin Office, Main Building (IT Block), Ground Floor'),
 
--- Bonafide main menu
-(5, 4, 'English', 'bonafide',
-'bonafide',
-'📜 There are multiple Bonafide Certificates available:
+(8, 4, 'Tamil', 'tc_procedure', 'tc, transfer certificate', '📋 Transfer Certificate பெறும் நடைமுறை\n1. துறை அலுவலகத்திற்குச் செல்லுங்கள்\n2. HOD கையொப்பம் பெறுங்கள்\n3. நூலக சரியாக்கல் பெறுங்கள்\n📍 நூலகம்: பிளாக்-A', '7-10 working days', NULL, 'Admin Office, Main Building, Ground Floor'),
 
-1. **General Bonafide Certificate** (Free) - Processing: 2-3 days
-   Proof of student status. Required for general purposes.
+(9, 3, 'English', 'missing_id', 'missing id, id card lost', '🆔 Missing ID Card Reissue\nFee: ₹250\n1. Inform Incharge\n2. Pay ₹250 at Cash Counter\n3. Collect new ID in 2-4 days\n⚠️ Note: Entry restricted without ID', '2-4 working days', 250.00, 'Admin Office, Main Building (IT Block), Ground Floor'),
 
-2. **Course Bonafide** (Free) - Processing: 3-4 days
-   Verification of current course enrollment.
+(10, 3, 'Tamil', 'missing_id', 'ஐடி கார்டு தொலைந்தது', '🆔 ID அட்டை மீண்டும் பெறுதல்\nகட்டணம்: ₹250\n1. Incharge-க்கு தகவல் சொல்லுங்கள்\n2. ₹250 கட்டணம் செலுத்துங்கள்\n⚠️ குறிப்பு: ID இல்லாமல் நுழைய அனுமதி இல்லை', '2-4 working days', 250.00, 'Admin Office, Main Building, Ground Floor'),
 
-3. **Passport Bonafide** (₹50) - Processing: 2-3 days
-   Required for passport applications.
+(11, 6, 'English', 'exam_eligibility', 'exam eligibility', '📚 Exam Eligibility:\nCategory A (≥ 75%): ✅ ELIGIBLE\nCategory B (65-74%): ⚠️ CONDONATION (₹250)\nCategory C (< 65%): ❌ NOT ELIGIBLE\n💡 Tip: Maintain 75% attendance', NULL, 250.00, 'Admin Office, Main Building(IT BLOCK), Ground Floor'),
 
-4. **Bonafide Without Fee Payment** (Free with Special Permission)
-   Approved only for students with genuine financial hardship.
+(12, 6, 'Tamil', 'exam_eligibility', 'தேர்வு தகுதி', '📚 தேர்வு தகுதி:\nCategory A (≥ 75%): ✅ தகுதி உள்ளது\nCategory B (65-74%): ⚠️ ₹250 கட்டணம்\nCategory C (< 65%): ❌ தகுதி இல்லை\n💡 குறிப்பு: 75% attendance அவசியம்', NULL, 250.00, 'Admin Office, Main Building(IT BLOCK), Ground Floor'),
 
-👉 Please type the specific certificate you need:
-- Type: general bonafide
-- Type: course bonafide
-- Type: passport bonafide
-- Type: bonafide without fee
+(13, 4, 'English', 'tc_discontinued', 'dropout tc', '📋 TC Procedure (Discontinued)\n1. HOD approval\n2. Library Clearance\n3. Original Admission docs\n💡 Provide reason for discontinuation', '7-10 working days', NULL, 'Admin Office, Main Building(IT BLOCK), Ground Floor'),
 
-📍 Location: Admin Office, Main Building (IT Block), Ground Floor
-⏰ Timings: Mon-Fri, 9:00 AM - 4:30 PM
-📞 Contact: Evening Office',
-NULL, NULL, 'Admin Office, Main Building, Ground Floor'),
+(14, 4, 'Tamil', 'tc_discontinued', 'படிப்பை நிறுத்தினால் tc', '📋 TC நடைமுறை (நிறுத்திய மாணவர்கள்)\n1. HOD அனுமதி\n2. நூலக சரியாக்கல்\n3. அசல் ஆவணங்கள் சமர்ப்பிக்கவும்\n💡 நிறுத்தும் காரணம் தேவை', '7-10 working days', NULL, 'Admin Office, Main Building, Ground Floor'),
 
-(6, 4, 'Tamil', 'bonafide',
-'போனாபைடு, போனாபைடு சான்றிதழ்',
-'📜 பல வகையான Bonafide Certificates உள்ளன:
+(15, 4, 'English', 'bonafide_general', 'general bonafide', '📜 General Bonafide\nFee: FREE\n1. Collect form\n2. Dept seal\n3. Submit to Evening Office\n💡 No fees required', '2-3 working days', NULL, 'Admin Office, Main Building, Ground Floor'),
 
-1. **General Bonafide Certificate** (இலவசம்) - செயல்படுத்தும் நேரம்: 2-3 நாட்கள்
-   மாணவர் நிலையின் சான்றாக உள்ளது.
+(16, 4, 'English', 'course_bonafide', 'course bonafide', '📜 Course Bonafide\nFee: FREE\n1. Fill form at Admin Office\n2. Verify enrollment\n3. Collect in 3-4 days', '3-4 working days', NULL, 'Admin Office, Main Building (IT BLOCK), Ground Floor'),
 
-2. **Course Bonafide** (இலவசம்) - செயல்படுத்தும் நேரம்: 3-4 நாட்கள்
-   தற்போதைய பாடநெறி சேர்க்கையின் சரிதGraphics.
+(17, 4, 'English', 'passport_bonafide', 'passport bonafide', '📜 Passport Bonafide\nFee: ₹50\n1. Attach ID copy\n2. Pay ₹50 fee\n3. Collect in 2-3 days', '2-3 working days', 50.00, 'Admin Office, Main Building (IT BLOCK), Ground Floor'),
 
-3. **Passport Bonafide** (₹50) - செயல்படுத்தும் நேரம்: 2-3 நாட்கள்
-   பாஸ்போர்ட் விண்ணப்பங்களுக்கு தேவை.
+(18, 4, 'English', 'bonafide_without_fee', 'no fee bonafide', '📜 Bonafide Without Fee\n1. Request letter\n2. Financial proof\n3. Principal approval\n⚠️ Approval is NOT automatic', '3-5 working days', NULL, 'Admin Office, Main Building (IT BLOCK), Ground Floor'),
 
-4. **Fee இல்லாமல் Bonafide** (இலவசம், சிறப்பு அனுமதியுடன்)
-   நிதி சிரமத்தில் உள்ள மாணவர்களுக்கு மட்டுமே அனுமதிக்கப்படுகிறது.
+(21, 4, 'English', 'marksheet_lost', 'duplicate marksheet', '📄 Duplicate Marksheet\nFee: Based on year gap (₹1,000 - ₹5,000)\n1. Fill form\n2. Submit with Police FIR\n📍 Location: IT Block', '10-15 working days', NULL, 'Admin Office, Main Building (IT BLOCK), Ground Floor'),
 
-👉 தயவு செய்து உங்களுக்கு தேவையான சான்றிதழை குறிப்பிடுங்கள்:
-- Type: general bonafide
-- Type: course bonafide
-- Type: passport bonafide
-- Type: bonafide without fee
-
-📍 இடம்: Admin Office, முதன்மை கட்டடம், தாழ்வாரம்
-⏰ நேரம்: திங்கட்கிழமை-வெள்ளிக்கிழமை, 9:00 AM - 4:30 PM
-📞 தொடர்பு: Evening Block',
-NULL, NULL, 'Admin Office, Main Building (IT Block), Ground Floor'),
-
--- TC passout
-(7, 4, 'English', 'tc_procedure',
-'tc, tc procedure, transfer certificate, how to get tc, tc process, certificate process, tc for pass out, passout tc, tc for passout',
-'📋 Transfer Certificate Procedure (Pass Out Students)
-Processing Time: 7-10 working days
-
-Step-by-Step Process:
-1. Visit Department Office with application form 
-2. Get department HOD signature and stamp
-3. Collect clearance certificate from:
-   - Department Head
-   - Library Staff (Return all books - Book Counter, GB Block)
-   - Hostel Warden (if applicable - Hostel Office)
-4. Complete office clearance at Admin Office with receipts
-5. Submit final documents to Admin Office
-6. Collect TC Certificate from Admin Office
-
-📍 Locations:
-- Library:GB Block , !st Floor
-- Hostel: Hostel Office, Behind Main Gate
-- Admin Office: IT Block, Ground Floor
-
-📞 Contact: Admin Office - Evening Office
-⏰ Office Hours: Mon-Fri, 9:00 AM - 4:30 PM',
-'7-10 working days', NULL, 'Admin Office, Main Building (IT Block), Ground Floor'),
-
-(8, 4, 'Tamil', 'tc_procedure',
-'tc, transfer certificate, tc நடைமுறை',
-'📋 Transfer Certificate பெறும் நடைமுறை (பட்டம் பெற்ற மாணவர்கள்)
-செயல்படுத்தும் நேரம்: 7-10 வேலை நாட்கள்
-
-படிப்படியான நடைமுறை:
-1. விண்ணப்பப் படிவத்துடன் துறை அலுவலகத்திற்குச் செல்லுங்கள் (துறை கவுண்டரில் கோரவும்)
-2. துறைத் தலைவர் கையொப்பம் மற்றும் முத்திரை பெறுங்கள்
-3. சரியாக்கல் சான்றிதழ் சேகரிக்கவும்:
-   - துறை தலைவர்
-   - நூலகக் কর্মचারி (அனைத்து புத்தகங்களை திருப்பி அளியுங்கள் - புத்தக கவுண்டர், பிளாக்-A)
-   - விடுதி வாரியம் (பொருந்தினால் - விடுதி அலுவலகம்)
-4. Admin Office-ற்கு ரசீதுகளுடன் அலுவலக சரியாக்கல் முடிக்கவும்
-5. Admin Office-ற்கு இறுதி ஆவணங்களை சமர்ப்பிக்கவும்
-6. Admin Office-ல் இருந்து TC சான்றிதழ் சேகரிக்கவும்
-
-📍 இடங்கள்:
-- துறை அலுவலகம்: துறை ப்ளாக், 1வது மாடி
-- நூலகம்: பிளாக்-A, முதன்மை கட்டடம்
-- விடுதி: விடுதி அலுவலகம், முதன்மை வாயிலுக்கு பின்னால்
-- Admin Office: முதன்மை கட்டடம், தாழ்வாரம்
-
-
-⏰ அலுவலக நேரம்: திங்கட்கிழமை-வெள்ளிக்கிழமை, 9:00 AM - 4:30 PM',
-'7-10 working days', NULL, 'Admin Office, Main Building, Ground Floor'),
-
--- Missing ID
-(9, 3, 'English', 'missing_id',
-'missing id, id card lost, lost id, lost id card, id lost, duplicate id, duplicate id card, id card procedure, missing id procedure',
-'🆔 Missing ID Card Reissue Procedure
-Processing Time: 5-7 working days
-Fee: ₹250
-
-Step-by-Step Process:
-1. Inform your Class Incharge (within the shift timing)
-2. Inform your Department HOD in writing
-3. Visit Admin Office (Main Building (IT Block), Ground Floor) with:
-   - Lost ID Declaration Form (Available at Admin Office)
-   - Written notification from Class Incharge
-   - HOD Approval Letter
-4. Submit form and pay reissue fee of ₹250 at Cash Counter
-5. Collect provisional ID receipt (valid for 15 days)
-6. Report to Campus Security with receipt
-7. Collect new ID card after 2-4 working days
-
-📍 Location: Admin Office, Main Building (IT Block), Ground Floor
-📞 Contact: Evening Office (ID Desk)
-⏰ Hours: Mon-Fri, 9:00 AM - 4:30 PM
-⚠️ Note: Without ID, you may face entry restrictions at campus gates',
-'2-4 working days', 250.00, 'Admin Office, Main Building (IT Block), Ground Floor'),
-
-(10, 3, 'Tamil', 'missing_id',
-'மிஸ்ஸிங் ஐடி, அடையாள அட்டை தொலைந்தது, id card காணவில்லை',
-'🆔 ID அட்டை மீண்டும் வெளியீடு செய்யும் நடைமுறை
-செயல்படுத்தும் நேரம்: 2-4 வேலை நாட்கள்
-கட்டணம்: ₹250
-
-படிப்படியான நடைமுறை:
-1. உங்கள் Class Incharge-க்கு தகவல் சொல்லுங்கள் (இழப்பிலிருந்து 24 மணிநேரத்திற்குள்)
-2. உங்கள் துறை HOD-க்கு எழுத்துப்பூர்வமாக தகவல் சொல்லுங்கள்
-3. Admin Office-ற்கு செல்லுங்கள் (முதன்மை கட்டடம், தாழ்வாரம்) கீழ்காணும் ஆவணங்களுடன்:
-   - இழந்த ID பிரகடன படிவம் (Admin Counter-ல் கிடைக்கும்)
-   - Class Incharge-ல் இருந்து எழுத்துப்பூர்வ அறிவிப்பு
-   - HOD அனுமোதன கடிதம்
-4. படிவத்தை சமர்ப்பிக்கவும் மற்றும் Cash Counter-ல் ₹250 கட்டணம் செலுத்துங்கள்
-5. 15 நாட்கள் செல்லுபடியாகும் தற்காலிக ID ரசீது சேகரிக்கவும்
-6. ரசீதுடன் Campus Security-ற்கு புகாரளியுங்கள்
-7. 2-4 வேலை நாட்களுக்குப் பிறகு புதிய ID அட்டை சேகரிக்கவும்
-
-📍 இடம்: Admin Office, முதன்மை கட்டடம், தாழ்வாரம்
-📞 தொடர்பு: நீட்சி 105 (ID Desk)
-⏰ நேரம்: திங்கட்கிழமை-வெள்ளிக்கிழமை, 9:00 AM - 4:30 PM
-⚠️ குறிப்பு: ID இல்லாமல் நீங்கள் கல்லூரி வாயிலில் நுழையத் தடுக்கப்படலாம்',
-'2-4 working days', 250.00, 'Admin Office, Main Building, Ground Floor'),
-
--- Exam eligibility
-(11, 6, 'English', 'exam_eligibility',
-'write exam, exam procedure, exam eligibility, eligible to write exam, can i write exam, how to write exam, can i attend exam with low attendance',
-'📚 Exam Eligibility Based on Attendance
-
-Category A (Attendance ≥ 75%): ✅ ELIGIBLE
-- Can write exam without any restrictions
-- No additional fees required
-
-Category B (Attendance 65-74%): ⚠️ ELIGIBLE WITH CONDONATION
-- Can write exam with payment of Condonation Fee: ₹250 to  ₹500
-- Fee must be paid 3 days before exam
-- Payment Location: Visit our offical website
-
-Category C (Attendance 50-64%): ❌ NOT ELIGIBLE
-- Cannot write exam
-- Must repeat the course next semester
-- Contact HOD for re-registration
-
-Category D (Attendance < 50%): ❌ NOT ELIGIBLE
-- Must repeat entire course
-- Complete re-registration required
-- Consult Academic Advisor
-
-📍 Condonation Payment Location: Admin Office, Main Building (IT BLOCK), Ground Floor
-📞 Contact: Evening Office(Academics)
-⏰ Hours: Mon-Fri, 9:00 AM - 4:30 PM
-
-💡 Tip: Maintain minimum 75% attendance to avoid complications',
-NULL, 250.00, 'Admin Office, Main Building(IT BLOCK), Ground Floor'),
-
-(12, 6, 'Tamil', 'exam_eligibility',
-'exam எழுத, exam eligibility, தேர்வு எழுதலாமா',
-'📚 Attendance-ல் அடிப்படையாக தேர்வு தகுதி
-
-Category A (Attendance ≥ 75%): ✅ தகுதி உள்ளது
-- எந்தவொரு கட்டுப்பாடும் இல்லாமல் தேர்வு எழுதலாம்
-- கூடுதல் கட்டணம் தேவைப்படுவதில்லை
-
-Category B (Attendance 65-74%): ⚠️ CONDONATION உடன் தகுதி உள்ளது
-- Condonation கட்டணம் செலுத்தி தேர்வு எழுதலாம்: ₹250
-- தேர்வுக்கு 3 நாட்களுக்கு முன் கட்டணம் செலுத்த வேண்டும்
-- செலுத்தும் இடம்: Admin Office, Cash Counter
-
-Category C (Attendance 50-64%): ❌ தகுதி இல்லை
-- தேர்வு எழுத முடியாது
-- அடுத்த செமிஸ்டரில் பாடத்தை மீண்டும் படிக்க வேண்டும்
-- HOD-ஐ தொடர்புகொண்டு மீண்டும் பதிவு செய்ய வேண்டும்
-
-Category D (Attendance < 50%): ❌ தகுதி இல்லை
-- முழு பாடத்தையும் மீண்டும் படிக்க வேண்டும்
-- முழு மீண்டும் பதிவு தேவை
-- Academic Advisor-ஐ பார்க்கவும்
-
-📍 Condonation செலுத்தும் இடம்: Admin Office, முதன்மை கட்டடம், தாழ்வாரம்
-📞 தொடர்பு: Evening Office (Academics)
-⏰ நேரம்: திங்கட்கிழமை-வெள்ளிக்கிழமை, 9:00 AM - 4:30 PM
-
-💡 குறிப்பு: சிக்கல்களை தவிர்க்க குறைந்தபட்சம் 75% attendance வைத்திருங்கள்',
-NULL, 250.00, 'Admin Office, Main Building(IT BLOCK), Ground Floor'),
-
--- TC discontinued
-(13, 4, 'English', 'tc_discontinued',
-'tc discontinued, tc for discontinued, discontinued tc, dropout tc, left course tc, drop out',
-'📋 Transfer Certificate Procedure (Discontinued/Dropout Students)
-Processing Time: 7-10 working days
-
-Step-by-Step Process:
-1. Contact your Department HOD with discontinuation letter
-2. Visit Department Office and collect TC Application Form
-3. Inform and get approval from:
-   - Class Incharge
-   - Department HOD (Signature & Stamp)
-4. Get clearance from Library (Return all books - Book Counter)
-5. If Hostel resident: Get clearance from Hostel Warden
-6. Visit Admin Office with all documents:
-   - TC Application Form
-   - HOD Approval Letter
-   - Library Clearance Certificate
-   - Hostel Clearance (if applicable)
-   - Original Admission Document
-7. Pay any pending fees (if any)
-8. Collect TC Certificate after 7-10 working days
-
-💡 Important Notes:
-- Submit reason for discontinuation (Academic/Personal/Financial/Health/Career/Other)
-- Maintain proof of reason (Medical certificate for health issues, etc.)
-- Dropout after 2 years requires additional approval
-
-📍 Location: Admin Office, Main Building (IT BLOCK), Ground Floor
-📞 Contact: Evening Office
-⏰ Hours: Mon-Fri, 9:00 AM - 4:30 PM',
-'7-10 working days', NULL, 'Admin Office, Main Building(IT BLOCK), Ground Floor'),
-
-(14, 4, 'Tamil', 'tc_discontinued',
-'படிப்பை நிறுத்தினால் tc, discontinued tc, dropout tc, transfer certificate',
-'📋 Transfer Certificate பெறும் நடைமுறை (நிறுத்திய/Dropout மாணவர்கள்)
-செயல்படுத்தும் நேரம்: 7-10 வேலை நாட்கள்
-
-படிப்படியான நடைமுறை:
-1. நிறுத்தும் கடிதத்துடன் உங்கள் துறை HOD-ஐ தொடர்புகொள்ளுங்கள்
-2. துறை அலுவலகத்திற்குச் சென்று TC விண்ணப்பப் படிவம் சேகரிக்கவும்
-3. பின்வருவனவற்றிலிருந்து அனுமதி பெறுங்கள்:
-   - Class Incharge
-   - துறை HOD (கையொப்பம் மற்றும் முத்திரை)
-4. நூலகத்திலிருந்து சரியாக்கல் பெறுங்கள் (அனைத்து புத்தகங்களை திருப்பி அளியுங்கள்)
-5. விடுதி வாசியாக இருந்தால்: விடுதி வாரிய தலைவரிடமிருந்து சரியாக்கல் பெறுங்கள்
-6. அனைத்து ஆவணங்களுடன் Admin Office-ற்குச் செல்லுங்கள்:
-   - TC விண்ணப்பப் படிவம்
-   - HOD அனுமোதன கடிதம்
-   - நூலக சரியாக்கல் சான்றிதழ்
-   - விடுதி சரியாக்கல் (பொருந்தினால்)
-   - அசல் சேர்க்கை ஆவணம்
-7. நிலுவைக் கட்டணம் செலுத்துங்கள் (ஏதேனும் இருந்தால்)
-8. 7-10 வேலை நாட்களுக்குப் பிறகு TC சான்றிதழ் சேகரிக்கவும்
-
-💡 முக்கிய குறிப்புகள்:
-- நிறுத்தும் காரணம் சமர்ப்பிக்கவும் (கல்வி/தனிப்பட்ட/நிதி/ஆரோக்கியம்/வேலை/மற்றவை)
-- காரணத்தின் சான்று வைத்திருக்கவும் (ஆரோக்கியம் சம்பந்தப்பட்ட பிரச்சினைக்கு மருத்துவ சான்றிதழ் போன்றவை)
-- 2 ஆண்டுகளுக்குப் பிறகு dropout பெறுவதற்கு கூடுதல் அனுமோதन தேவை
-
-📍 இடம்: Admin Office, முதன்மை கட்டடம், தாழ்வாரம்
-📞 தொடர்பு:Evening Office
-⏰ நேரம்: திங்கட்கிழமை-வெள்ளிக்கிழமை, 9:00 AM - 4:30 PM',
-'7-10 working days', NULL, 'Admin Office, Main Building, Ground Floor'),
-
--- General bonafide
-(15, 4, 'English', 'bonafide_general',
-'general bonafide certificate, general bonafide, student bonafide',
-'📜 General Bonafide Certificate
-Processing Time: 2-3 working days
-Fee: FREE
-
-Purpose:
-- Proof that you are a bonafide student of the college
-- Required for various government scholarships
-- Needed for educational loans from banks
-- Used for visa applications
-
-Step-by-Step Procedure:
-1. Visit Admin Office (Main Building (IT BLOCK), Ground Floor)
-2. Collect General Bonafide Request Form through the class incharge
-3. Fill in your registration number, name, department, and year
-4. Visit Department  and get:
-   - Class Incharge signature
-   - Department seal/stamp
-5. Visit College Union Office and get signature
-6. Return to Admin Office with completed form
-7. Submit to Evening Office
-8. Collect certificate after 2-3 working days
-
-Required Documents:
-- Valid ID Card (or Provisional ID)
-- Filled Bonafide Form
-- Department & Union seals
-
-📍 Location: Admin Office, Main Building (IT BLOCK), Ground Floor
-📞 Contact: Evening Block (Certificates Desk)
-⏰ Hours: Mon-Fri, 9:00 AM - 4:30 PM
-💡 No fees required - This is a basic service provided to all students',
-'2-3 working days', NULL, 'Admin Office, Main Building, Ground Floor'),
-
--- Course bonafide
-(16, 4, 'English', 'course_bonafide',
-'course bonafide',
-'📜 Course Bonafide Certificate
-Processing Time: 3-4 working days
-Fee: FREE
-
-Purpose:
-- Verification of your current course enrollment
-- Required for semester admissions
-- Proof of ongoing studies
-
-Procedure:
-1. Visit Admin Office (Main Building (IT BLOCK), Ground Floor)
-2. Fill Course Bonafide Request Form
-3. Provide:
-   - Current semester details
-   - Registration number
-   - Course code and course name
-4. Admin staff will verify enrollment in system
-5. Collect certificate after 3-4 working days
-
-Required Documents:
-- Valid ID Card
-- Filled Request Form
-
-📍 Location: Admin Office, Main Building (IT BLOCK), Ground Floor
-📞 Contact: Evening Office (Academics Desk)
-⏰ Hours: Mon-Fri, 9:00 AM - 4:30 PM',
-'3-4 working days', NULL, 'Admin Office, Main Building (IT BLOCK), Ground Floor'),
-
--- Passport bonafide
-(17, 4, 'English', 'passport_bonafide',
-'passport bonafide',
-'📜 Passport Bonafide Certificate
-Processing Time: 2-3 working days
-Fee: ₹50
-
-Purpose:
-- Mandatory for Indian passport applications
-- Accepted by Ministry of External Affairs
-- Required proof of student status for passport
-
-Procedure:
-1. Visit Admin Office (Main Building (IT BLOCK), Ground Floor)
-2. Collect Passport Bonafide Request Form
-3. Fill form with:
-   - Full name (as per documents)
-   - Date of birth
-   - Registration number
-   - Current semester/year
-4. Attach photocopy of:
-   - Valid ID Card
-   - Admission Document
-5. Pay ₹50 fee at Cash Counter
-6. Submit form to Certificates Desk
-7. Collect certificate after 2-3 working days
-
-Payment Details:
-- Cash/Check accepted at Admin Office Cash Counter
-- Fee receipt will be provided
-
-Important Notes:
-- Ensure name matches your government ID
-- Certificate validity: 1 year from issue date
-- Used only for passport applications
-
-📍 Location: Admin Office, Main Building (IT BLOCK), Ground Floor
-📞 Contact: Evening Office (Certificates Desk)
-⏰ Hours: Mon-Fri, 9:00 AM - 4:30 PM',
-'2-3 working days', 50.00, 'Admin Office, Main Building (IT BLOCK), Ground Floor'),
-
--- Bonafide without fee
-(18, 4, 'English', 'bonafide_without_fee',
-'bonafide without fee, bonafide without fee payment, no fee bonafide',
-'📜 Bonafide Without Fee Payment
-Processing Time: 3-5 working days (with approval)
-Fee: FREE (only with special permission)
-
-Eligibility:
-- Proven financial hardship (Below Poverty Line, etc.)
-- Orphaned students
-- Single parent family
-- Students receiving scholarship
-- Exceptional cases approved by Principal
-
-Required Documents:
-1. Bonafide Request Letter (explain reason for waiver)
-2. Proof of financial condition:
-   - BPL Certificate (if available)
-   - Parent''s income proof
-   - Affidavit on behalf of Principal
-3. Valid ID Card
-4. Admission Document
-
-Approval Process:
-1. Submit application at Admin Office with all documents
-2. Request forwarded to:
-   - Class Incharge (verification)
-   - HOD (approval)
-   - Dean of Student Affairs
-3. Final approval from Principal/Director
-4. Once approved, certificate is issued FREE
-
-Timeline:
-- Verification: 2-3 days
-- Approval: 1-2 days
-- Certificate issuance: 1 day
-
-⚠️ Important Notes:
-- Approval is NOT automatic - must provide valid justification
-- Decision made on case-by-case basis
-- Honorable reason required for waiver
-
-📍 Location: Admin Office, Main Building (IT BLOCK), Ground Floor
-📞 Contact: Evening Office (Special Cases)
-⏰ Hours: Mon-Fri, 9:00 AM - 4:30 PM',
-'3-5 working days', NULL, 'Admin Office, Main Building (IT BLOCK), Ground Floor'),
-
--- Marksheet lost
-(21, 4, 'English', 'marksheet_lost',
-'marksheet lost, lost marksheet, my marksheet is lost, certificate lost, duplicate marksheet',
-'📄 Duplicate Marksheet/Certificate Procedure
-Processing Time: 10-15 working days
-
-Fee Structure (Based on Year Gap):
-- 1 year gap: ₹1,000
-- 2 year gap: ₹2,000
-- 3 year gap: ₹3,000
-- 4 year gap: ₹4,000
-- 5 year gap: ₹5,000
-- After 5 years: Request sent to University (Processing: 4-6 weeks)
-
-Step-by-Step Process:
-1. Visit Admin Office (Main Building (IT BLOCK), Ground Floor)
-2. Collect Duplicate Certificate Request Form
-3. Fill form with:
-   - Semester/Year of exam
-   - Subject codes and names
-   - Exam registration number
-4. Provide supporting documents:
-   - Copy of original ID Card
-   - Copy of Admission Document
-   - Police FIR (if marked as lost/stolen)
-5. Pay applicable fee at Cash Counter:
-   - Processing fee: ₹100
-   - Certificate duplication fee: ₹(based on year gap)
-6. Submit completed form with receipts
-7. Admin verifies details with University records
-8. Duplicate certificate printed and issued
-
-Important Notes:
-- Official government certification from University
-- Valid only as official proof
-- Cannot replace original for certain legal purposes
-- Service not available if gap exceeds 5 years (Direct University contact required)
-
-📍 Location: Admin Office, Main Building (IT BLOCK), Ground Floor
-📞 Contact: Extension 105 (Records Desk)
-⏰ Hours: Mon-Fri, 9:00 AM - 4:30 PM',
-'10-15 working days', NULL, 'Admin Office, Main Building (IT BLOCK), Ground Floor'),
-
-(22, 4, 'Tamil', 'marksheet_lost',
-'மார்க்ஷீட் தொலைந்தது, marksheet lost, certificate lost, duplicate marksheet',
-'📄 Duplicate மார்க்ஷீட்/சான்றிதழ் பெறும் நடைமுறை
-செயல்படுத்தும் நேரம்: 10-15 வேலை நாட்கள்
-
-கட்டணம் (ஆண்டு இடைவெளிக்கு அடிப்படையாக):
-- 1 ஆண்டு இடைவெளி: ₹1,000
-- 2 ஆண்டு இடைவெளி: ₹2,000
-- 3 ஆண்டு இடைவெளி: ₹3,000
-- 4 ஆண்டு இடைவெளி: ₹4,000
-- 5 ஆண்டு இடைவெளி: ₹5,000
-- 5 ஆண்டுகளுக்குப் பிறகு: பல்கலைக்கழகத்திற்கு கோரிக்கை (செயல்படுத்தும் நேரம்: 4-6 வாரங்கள்)
-
-படிப்படியான நடைமுறை:
-1. Admin Office-ற்குச் செல்லுங்கள் (முதன்மை கட்டடம், தாழ்வாரம்)
-2. Duplicate சான்றிதழ் கோரிக்கைப் படிவம் சேகரிக்கவும்
-3. படிவத்தில் நிரப்பிக்கவும்:
-   - செமிஸ்டர்/தேர்வு ஆண்டு
-   - பாடப் குறியீடுகள் மற்றும் பெயர்கள்
-   - தேர்வு பதிவு எண்
-4. ஆதார ஆவணங்கள் வழங்குங்கள்:
-   - அசல் ID அட்டையின் நகல்
-   - சேர்க்கை ஆவணத்தின் நகல்
-   - போலீஸ் FIR (தொலைந்தது/திருடப்பட்ட என்று குறித்தால்)
-5. Cash Counter-ல் பொருந்தக்கூடிய கட்டணம் செலுத்துங்கள்:
-   - செயல்படுத்தும் கட்டணம்: ₹100
-   - சான்றிதழ் duplicate கட்டணம்: ₹(ஆண்டு இடைவெளிக்கு அடிப்படையாக)
-6. ரசீதுகளுடன் முடிந்த படிவம் சமர்ப்பிக்கவும்
-7. நிர்வாகம் பல்கலைக்கழக பதிவுகளுடன் விவரங்களை சரிபார்க்கும்
-8. Duplicate சான்றிதழ் அச்சிடப்பட்டு வெளியீடு செய்யப்படும்
-
-முக்கிய குறிப்புகள்:
-- அரசாங்க சரிசெய்தல் பல்கலைக்கழகத்திலிருந்து
-- அதிகாரப்பூர்வ சான்றாக மட்டுமே செல்லுபடியாகும்
-- சில சட்ட நோக்கங்களுக்கு அசலைக் குறிக்கக்குறிக்க முடியாது
-- 5 ஆண்டுகளுக்கு மேல் இடைவெளி இருந்தால் சேவை கிடைக்காது (நேரடி பல்கலைக்கழக தொடர்பு தேவை)
-
-📍 இடம்: Admin Office, முதன்மை கட்டடம், தாழ்வாரம்
-📞 தொடர்பு:Evening Office (Records Desk)
-⏰ நேரம்: திங்கட்கிழமை-வெள்ளிக்கிழமை, 9:00 AM - 4:30 PM');
-
+(22, 4, 'Tamil', 'marksheet_lost', 'மார்க்ஷீட் தொலைந்தது, duplicate marksheet', '📄 Duplicate மார்க்ஷீட் பெறும் நடைமுறை\n1. விண்ணப்பப் படிவம்\n2. ஆண்டு இடைவெளிக்கு ஏற்ப கட்டணம்\n📍 இடம்: Admin Office, தாழ்வாரம்\n📞 தொடர்பு: Evening Office', '10-15 working days', NULL, 'Admin Office, முதன்மை கட்டடம், தாழ்வாரம்');
 -- =========================
 -- 3. POLICIES (ENHANCED)
 -- =========================
@@ -626,20 +106,18 @@ CREATE TABLE policies (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO policies (policy_id, module_id, language, policy_title, policy_description, value_numeric, value_text, fine_applicable, installment_allowed, due_date, office_location) VALUES
-
-(1, 2, 'English', 'Semester Fee', 'Annual fee per semester', 'visit our website for more details', 'Due on registration', FALSE, TRUE, 'Before semester starts', 'Finance Office, refer admin office'),
+(1, 2, 'English', 'Semester Fee', 'Annual fee per semester', NULL, 'Due on registration', FALSE, TRUE, 'Before semester starts', 'Finance Office, refer admin office'),
 (2, 2, 'English', 'Late Fee', 'Fine applicable after due date (₹500 per day)', 500.00, 'Fine Applicable', TRUE, FALSE, '7 days after due date', 'Finance Office'),
 (3, 2, 'English', 'Hostel Fee', 'Annual hostel charges for residents', 30000.00, 'Payable once a year', FALSE, FALSE, 'Before hostel registration', 'Hostel Office'),
-(4, 2, 'Tamil', 'செமிஸ்டர் கட்டணம்', 'ஒரு செமிஸ்டருக்கு ஆண்டு கட்டணம்','visit our website for more details' , 'பதிவுக்கு முன் செலுத்த வேண்டும்', FALSE, TRUE, 'செமிஸ்டர் தொடங்குவதற்கு முன்', 'Finance Office, Block-B'),
+(4, 2, 'Tamil', 'செமிஸ்டர் கட்டணம்', 'ஒரு செமிஸ்டருக்கு ஆண்டு கட்டணம்', NULL, 'பதிவுக்கு முன் செலுத்த வேண்டும்', FALSE, TRUE, 'செமிஸ்டர் தொடங்குவதற்கு முன்', 'Finance Office'),
 (5, 2, 'Tamil', 'தாமத கட்டணம்', 'கட்டணத்தின் கடைசி தேதிக்குப் பிறகு அபராதம் (₹500 நாளொன்றுக்கு)', 500.00, 'அபராதம் பொருந்தும்', TRUE, FALSE, 'கடைசி தேதிக்கு 7 நாட்களுக்குப் பிறகு', 'Finance Office'),
-(6, 3, 'English', 'Medical Leave', 'Medical certificate required for absence', NULL, 'Medical Certificate Required', FALSE, FALSE, 'Within 3 days of return', 'Department '),
-(7, 3, 'Tamil', 'மருத்துவ விடுப்பு', 'விடுப்புக்கு மருத்துவச் சான்றிதழ் தேவை', NULL, 'மருத்துவச் சான்றிதழ் அவசியம்', FALSE, FALSE, 'திரும்பிய 3 நாட்களுக்குள்', 'Department '),
-(7, 4, 'English', 'Transfer Certificate', 'Students must complete department and office clearance before receiving TC.', NULL, 'Clearance Required (7-10 days)', FALSE, FALSE, 'Immediate', 'Department & Admin Office'),
-(8, 4, 'Tamil', 'மாற்றுச் சான்றிதழ்', 'TC பெற துறை மற்றும் அலுவலக clearance முடிக்க வேண்டும்.', NULL, 'Clearance அவசியம் (7-10 நாட்கள்)', FALSE, FALSE, 'உடனடியாக', 'Department & Admin Office'),
-(9, 6, 'English', 'Attendance Requirement', 'Minimum 75% attendance required to write exam', 75, 'Minimum 75%', FALSE, FALSE, NULL, 'Department & Admin Office'),
-(10, 6, 'English', 'Condonation Fee', 'Condonation fee for 65-74% attendance', 250.00, '₹250 condonation fee', TRUE, FALSE, '3 days before exam', 'Admin Office, Cash Counter'),
-(11, 6, 'Tamil', 'Attendance Requirement', 'தேர்வு எழுத குறைந்தபட்சம் 75% attendance தேவை', 75, 'குறைந்தபட்சம் 75%', FALSE, FALSE, NULL, 'Department & Admin Office');
-
+(6, 3, 'English', 'Medical Leave', 'Medical certificate required for absence', NULL, 'Medical Certificate Required', FALSE, FALSE, 'Within 3 days of return', 'Department'),
+(7, 3, 'Tamil', 'மருத்துவ விடுப்பு', 'விடுப்புக்கு மருத்துவச் சான்றிதழ் தேவை', NULL, 'மருத்துவச் சான்றிதழ் அவசியம்', FALSE, FALSE, 'திரும்பிய 3 நாட்களுக்குள்', 'Department'),
+(8, 4, 'English', 'Transfer Certificate', 'Students must complete department and office clearance before receiving TC.', NULL, 'Clearance Required (7-10 days)', FALSE, FALSE, 'Immediate', 'Department & Admin Office'),
+(9, 4, 'Tamil', 'மாற்றுச் சான்றிதழ்', 'TC பெற துறை மற்றும் அலுவலக clearance முடிக்க வேண்டும்.', NULL, 'Clearance அவசியம் (7-10 நாட்கள்)', FALSE, FALSE, 'உடனடியாக', 'Department & Admin Office'),
+(10, 6, 'English', 'Attendance Requirement', 'Minimum 75% attendance required to write exam', 75, 'Minimum 75%', FALSE, FALSE, NULL, 'Department & Admin Office'),
+(11, 6, 'English', 'Condonation Fee', 'Condonation fee for 65-74% attendance', 250.00, '₹250 condonation fee', TRUE, FALSE, '3 days before exam', 'Admin Office, Cash Counter'),
+(12, 6, 'Tamil', 'Attendance Requirement', 'தேர்வு எழுத குறைந்தபட்சம் 75% attendance தேவை', 75, 'குறைந்தபட்சம் 75%', FALSE, FALSE, NULL, 'Department & Admin Office');
 -- =========================
 -- 4. ATTENDANCE CATEGORIES (ENHANCED)
 -- =========================
