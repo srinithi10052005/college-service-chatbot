@@ -1,5 +1,3 @@
-
-
 CREATE DATABASE IF NOT EXISTS college_db
 CHARACTER SET utf8mb4
 COLLATE utf8mb4_general_ci;
@@ -270,7 +268,7 @@ INSERT INTO admin_services (id, service_name, issued_by, purpose, requirements, 
 (8, '📅 Attendance Certificate', '🏛️ Admin Office', '📋 Proof of previous semester attendance', '🔍 Record verification + Valid ID', 0.00, '2-3 working days', '🏛️ Admin Office, Main Building Ground Floor', '🆓 Free service'),
 (9, '🥇 First Graduation Certificate', '🏛️ Admin Office', '🎓 Proof of first graduate status in family', '📋 Submit declaration if not available', 0.00, '3-4 working days', '🏛️ Admin Office, Main Building (IT BLOCK) Ground Floor', '📎 Alternative proof accepted'),
 (10, '🌸 Menstrual Hygiene Product Service', '🏥 College Facility', '💊 Sanitary napkin availability for students', '🪪 Student ID + Request at designated counter', 0.00, 'Immediate ⚡', '🏥 College Health Center ', '🆓 Free service — Token system'),
-(11, '🍽️ Subsidized Canteen Meals', '🍽️ Canteen Management', '🥗 Affordable student meal service', '🪪 Student ID + Token purchase', 10.00, 'Immediate ⚡', '🍽️ College Canteen, Opposite to GB BLOCK ','Collect token from admin Office (IT BLOCK)', '💰 Budget: Rs.10/meal'),
+(11, '🍽️ Subsidized Canteen Meals', '🍽️ Canteen Management', '🥗 Affordable student meal service', '🪪 Student ID + Token purchase', 10.00, 'Immediate ⚡', '🍽️ College Canteen, Opposite to GB BLOCK', 'Collect token from admin Office (IT BLOCK) — 💰 Budget: Rs.10/meal'),
 (12, '📢 Complaint Registration Service', '🤝 Union/Admin Office', '📝 Report issues or complaints', '📋 Detailed complaint letter', 0.00, 'Same day registration', '🏛️ Union Office/Admin Office', '✅ Action taken within 7 days'),
 (13, '🔍 Missing Items Report', '🏛️ Admin/Union Office', '📦 Report lost/found items on campus', '📋 Submit complaint + Detailed description', 0.00, 'Same day recording', '🏛️ Admin Office/Union Office', '⏳ 30-day claim period'),
 (14, '🪪 Lost ID Card Reissue', '🏛️ Admin Office', '🪪 Reissue ID card for lost/damaged cards', '📋 Application form + HOD approval + Declaration form', 250.00, '5-7 working days', '🏛️ Admin Office, Main Building Ground Floor', '💰 Fee: Rs.250'),
