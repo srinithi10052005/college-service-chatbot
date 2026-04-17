@@ -18,6 +18,63 @@ function detectLanguage($text) {
     return preg_match('/[\x{0B80}-\x{0BFF}]/u', $text) ? "Tamil" : "English";
 }
 
+/* =========================
+   FUZZY MATCHING FUNCTION
+   ========================= */
+function fuzzyMatch($input, $keyword, $threshold = 0.75) {
+    $input = mb_strtolower($input, 'UTF-8');
+    $keyword = mb_strtolower($keyword, 'UTF-8');
+    
+    // Exact match
+    if ($input === $keyword) {
+        return 1.0;
+    }
+    
+    // Contains match
+    if (strpos($input, $keyword) !== false || strpos($keyword, $input) !== false) {
+        return 0.95;
+    }
+    
+    // Levenshtein distance (fuzzy match for typos)
+    $similarity = 0;
+    similar_text($input, $keyword, $similarity);
+    $similarity = $similarity / 100;
+    
+    if ($similarity >= $threshold) {
+        return $similarity;
+    }
+    
+    // Soundex match (phonetic - good for pronunciation mistakes)
+    if (soundex($input) === soundex($keyword)) {
+        return 0.85;
+    }
+    
+    return 0;
+}
+
+/* =========================
+   IMPROVED KEYWORD SEARCH
+   ========================= */
+function findBestMatch($input, $keywords, $threshold = 0.75) {
+    $bestMatch = null;
+    $bestScore = 0;
+    
+    $keywordArray = array_map('trim', preg_split('/,|\n/', $keywords));
+    
+    foreach ($keywordArray as $keyword) {
+        if (empty($keyword)) continue;
+        
+        $score = fuzzyMatch($input, $keyword, $threshold);
+        
+        if ($score > $bestScore) {
+            $bestScore = $score;
+            $bestMatch = $keyword;
+        }
+    }
+    
+    return ($bestScore >= $threshold) ? $bestMatch : null;
+}
+
 $raw = file_get_contents("php://input");
 $data = json_decode($raw, true);
 
@@ -40,10 +97,9 @@ $normalized = normalizeText($message);
 
 /* =========================
    1) Greeting
-   Exact-match only
    ========================= */
 $englishGreetings = ["hi", "hello", "hey", "good morning", "good afternoon", "good evening"];
-$tamilGreetings = ["வணக்கம்", "ஹாய்", "ஹலோ", "காலை வணக்கம்", "மாலை வணக்கம்"];
+$tamilGreetings   = ["வணக்கம்", "ஹாய்", "ஹலோ", "காலை வணக்கம்", "மாலை வணக்கம்"];
 
 if (in_array($normalized, $englishGreetings, true)) {
     sendReply("👋 Welcome to SDNB ASKNOVA. I am your service assistant. Ask me about bonafide, outpass, TC, attendance, missing ID, missing TC, MOI, or services.");
@@ -54,34 +110,34 @@ if (in_array($message, $tamilGreetings, true)) {
 }
 
 /* =========================
-   2) Admin-service aliases
-   Handle natural user wording early
+   2) Admin-service aliases (FUZZY MATCHED)
    ========================= */
 $serviceAliases = [
-    "food facility" => "Subsidized Food",
-    "food service" => "Subsidized Food",
-    "canteen food" => "Subsidized Food",
-    "cheap food" => "Subsidized Food",
-    "subsidized food" => "Subsidized Food",
-    "napkin" => "Napkin Service",
-    "napkin service" => "Napkin Service",
-    "attendance certificate" => "Attendance Certificate",
-    "scholarship" => "Scholarship Form",
-    "scholarship form" => "Scholarship Form",
-    "fee structure" => "Fee Structure Certificate",
-    "fee structure certificate" => "Fee Structure Certificate",
-    "lost id card" => "Lost ID Card",
-    "complaint" => "Complaint Service",
-    "missing items" => "Missing Items Report",
-    "single parent support" => "Single Parent Support",
-    "continuous study" => "Continuous Study / Discontinuation",
+    "food facility"              => "Subsidized Food",
+    "food service"               => "Subsidized Food",
+    "canteen food"               => "Subsidized Food",
+    "cheap food"                 => "Subsidized Food",
+    "subsidized food"            => "Subsidized Food",
+    "napkin"                     => "Napkin Service",
+    "napkin service"             => "Napkin Service",
+    "attendance certificate"     => "Attendance Certificate",
+    "scholarship"                => "Scholarship Form",
+    "scholarship form"           => "Scholarship Form",
+    "fee structure"              => "Fee Structure Certificate",
+    "fee structure certificate"  => "Fee Structure Certificate",
+    "lost id card"               => "Lost ID Card",
+    "complaint"                  => "Complaint Service",
+    "missing items"              => "Missing Items Report",
+    "single parent support"      => "Single Parent Support",
+    "transfer certificate"       => "Passout / Dropout",
+    "tranfer certificate"        => "Passout / Dropout",
     "physically challenged support" => "Physically Challenged Support"
 ];
 
 foreach ($serviceAliases as $alias => $serviceName) {
-    if (strpos($normalized, $alias) !== false) {
+    if (fuzzyMatch($normalized, $alias, 0.75) > 0.75) {
         $stmt = $conn->prepare("
-            SELECT service_name, issued_by, purpose, requirements, fees, notes
+            SELECT service_name, issued_by, purpose, requirements, fees
             FROM admin_services
             WHERE service_name = ?
             LIMIT 1
@@ -92,36 +148,23 @@ foreach ($serviceAliases as $alias => $serviceName) {
 
         if ($row = $res->fetch_assoc()) {
             $reply = "Service: " . $row["service_name"] . "\n";
-
-            if (!empty($row["issued_by"])) {
-                $reply .= "Issued By: " . $row["issued_by"] . "\n";
-            }
-            if (!empty($row["purpose"])) {
-                $reply .= "Purpose: " . $row["purpose"] . "\n";
-            }
-            if (!empty($row["requirements"])) {
-                $reply .= "Requirements: " . $row["requirements"] . "\n";
-            }
-            if (!is_null($row["fees"])) {
-                $reply .= "Fees: Rs." . number_format((float)$row["fees"], 2) . "\n";
-            }
-            if (!empty($row["notes"])) {
-                $reply .= "Notes: " . $row["notes"];
-            }
-
+            if (!empty($row["issued_by"]))   $reply .= "Issued By: "    . $row["issued_by"]    . "\n";
+            if (!empty($row["purpose"]))     $reply .= "Purpose: "      . $row["purpose"]      . "\n";
+            if (!empty($row["requirements"])) $reply .= "Requirements: " . $row["requirements"] . "\n";
+            if (!is_null($row["fees"]))      $reply .= "Fees: Rs."      . number_format((float)$row["fees"], 2) . "\n";
             sendReply(trim($reply));
         }
     }
 }
 
 /* =========================
-   3A) Condonation fee
+   3) Condonation fee
    ========================= */
 if (
-    strpos($normalized, "condonation fee") !== false ||
-    strpos($normalized, "attendance condonation fee") !== false ||
-    strpos($normalized, "low attendance fee") !== false ||
-    strpos($normalized, "fee for attendance shortage") !== false
+    fuzzyMatch($normalized, "condonation fee", 0.75) > 0.75 ||
+    fuzzyMatch($normalized, "attendance condonation fee", 0.75) > 0.75 ||
+    fuzzyMatch($normalized, "low attendance fee", 0.75) > 0.75 ||
+    fuzzyMatch($normalized, "fee for attendance shortage", 0.75) > 0.75
 ) {
     if ($language === "Tamil") {
         sendReply("65% முதல் 74% வரை attendance உள்ளவர்கள் ரூ.250 condonation fee செலுத்த வேண்டும்.");
@@ -131,7 +174,7 @@ if (
 }
 
 /* =========================
-   3) Attendance percentage
+   4) Attendance percentage
    ========================= */
 if (
     preg_match('/(\d+)\s*%/u', $normalized, $m) ||
@@ -144,7 +187,7 @@ if (
         SELECT category_code, title, response
         FROM attendance_categories
         WHERE language = ?
-        AND ? BETWEEN min_percent AND max_percent
+          AND ? BETWEEN min_percent AND max_percent
         LIMIT 1
     ");
     $stmt->bind_param("si", $language, $percent);
@@ -152,7 +195,7 @@ if (
     $res = $stmt->get_result();
 
     if ($row = $res->fetch_assoc()) {
-        $reply = "Attendance: {$percent}%\n";
+        $reply  = "Attendance: {$percent}%\n";
         $reply .= $row["title"] . " (" . $row["category_code"] . ")\n";
         $reply .= $row["response"];
         sendReply($reply);
@@ -160,40 +203,23 @@ if (
 }
 
 /* =========================
-   4) Condonation fee
+   5) Attendance rules / exam eligibility (FUZZY MATCHED)
    ========================= */
-if (
-    strpos($normalized, "condonation fee") !== false ||
-    strpos($normalized, "attendance condonation fee") !== false ||
-    strpos($normalized, "low attendance fee") !== false ||
-    strpos($normalized, "fee for attendance shortage") !== false
-) {
-    if ($language === "Tamil") {
-        sendReply("65% முதல் 74% வரை attendance உள்ளவர்கள் ரூ.250 condonation fee செலுத்த வேண்டும்.");
-    } else {
-        sendReply("Students with attendance between 65% and 74% must pay a condonation fee of Rs.250.");
+$examKeywords = ["attendance rules", "minimum attendance", "required attendance", 
+                 "can i write exam", "write the exam", "how to write exam", 
+                 "exam procedure", "exam eligibility", "can i attend exam with low attendance"];
+
+$isExamQuery = false;
+foreach ($examKeywords as $keyword) {
+    if (fuzzyMatch($normalized, $keyword, 0.75) > 0.75) {
+        $isExamQuery = true;
+        break;
     }
 }
 
-/* =========================
-   5) Attendance rules / exam eligibility
-   Avoid admin-service phrases here
-   ========================= */
-if (
-    strpos($normalized, "attendance rules") !== false ||
-    strpos($normalized, "minimum attendance") !== false ||
-    strpos($normalized, "required attendance") !== false ||
-    strpos($normalized, "can i write exam") !== false ||
-    strpos($normalized, "write the exam") !== false ||
-    strpos($normalized, "how to write exam") !== false ||
-    strpos($normalized, "exam procedure") !== false ||
-    strpos($normalized, "exam eligibility") !== false ||
-    strpos($normalized, "can i attend exam with low attendance") !== false ||
-    (
-        strpos($normalized, "attendance") !== false &&
-        strpos($normalized, "attendance certificate") === false
-    )
-) {
+if ($isExamQuery || 
+    (fuzzyMatch($normalized, "attendance", 0.75) > 0.75 && 
+     fuzzyMatch($normalized, "attendance certificate", 0.75) <= 0.75)) {
     $stmt = $conn->prepare("
         SELECT category_code, title, response
         FROM attendance_categories
@@ -215,68 +241,192 @@ if (
 }
 
 /* =========================
-   6) Missing TC / marksheet with year gap
+   6) Missing TC / marksheet with year gap (FUZZY MATCHED)
    ========================= */
-if (
-    (
-        strpos($normalized, "missing tc") !== false ||
-        strpos($normalized, "missing marksheet") !== false ||
-        strpos($normalized, "marksheet lost") !== false ||
-        strpos($normalized, "lost marksheet") !== false ||
-        strpos($normalized, "duplicate certificate") !== false ||
-        strpos($normalized, "duplicate certificates") !== false
-    ) &&
-    preg_match('/(\d+)\s*year/u', $normalized, $m)
-) {
+$tcKeywords = ["missing tc", "missing marksheet", "marksheet lost", "lost marksheet", 
+               "duplicate certificate", "duplicate certificates"];
+
+$hasTcKeyword = false;
+foreach ($tcKeywords as $keyword) {
+    if (fuzzyMatch($normalized, $keyword, 0.75) > 0.75) {
+        $hasTcKeyword = true;
+        break;
+    }
+}
+
+if ($hasTcKeyword && preg_match('/(\d+)\s*year/u', $normalized, $m)) {
     $yearGap = (int)$m[1];
 
     $stmt = $conn->prepare("
-        SELECT topic, purpose, year_gap, amount, notes
+        SELECT topic, purpose, year_gap, amount
         FROM student_requests
-        WHERE topic = 'Missing TC / Marksheets'
-        AND year_gap = ?
+        WHERE topic LIKE ? AND year_gap = ?
         LIMIT 1
     ");
-    $stmt->bind_param("i", $yearGap);
+    $topicPattern = "%Duplicate%";
+    $stmt->bind_param("si", $topicPattern, $yearGap);
     $stmt->execute();
     $res = $stmt->get_result();
 
     if ($row = $res->fetch_assoc()) {
         $reply = "📄 " . $row["topic"] . "\n";
-
-        if (!empty($row["purpose"])) {
-            $reply .= "Purpose: " . $row["purpose"] . "\n";
-        }
-        if (!is_null($row["year_gap"])) {
-            $reply .= "Year Gap: " . $row["year_gap"] . "\n";
-        }
-        if (!is_null($row["amount"])) {
-            $reply .= "Amount: Rs." . number_format((float)$row["amount"], 2) . "\n";
-        }
-        if (!empty($row["notes"])) {
-            $reply .= "Notes: " . $row["notes"];
-        }
-
+        if (!empty($row["purpose"]))   $reply .= "Purpose: "  . $row["purpose"]  . "\n";
+        if (!is_null($row["year_gap"])) $reply .= "Year Gap: " . $row["year_gap"] . "\n";
+        if (!is_null($row["amount"]))   $reply .= "Amount: Rs." . number_format((float)$row["amount"], 2) . "\n";
         sendReply(trim($reply));
     }
 }
 
 /* =========================
-   7) Student request special topics
+   7A) Dropout — Step A: Show categories (FUZZY MATCHED)
+   ========================= */
+if (fuzzyMatch($normalized, "dropout", 0.75) > 0.75 &&
+    fuzzyMatch($normalized, "reason", 0.75) <= 0.75 &&
+    fuzzyMatch($normalized, "academic", 0.75) <= 0.75 &&
+    fuzzyMatch($normalized, "personal", 0.75) <= 0.75 &&
+    fuzzyMatch($normalized, "financial", 0.75) <= 0.75 &&
+    fuzzyMatch($normalized, "health", 0.75) <= 0.75 &&
+    fuzzyMatch($normalized, "career", 0.75) <= 0.75) {
+    
+    $reply  = "📋 Dropout Request\n\n";
+    $reply .= "Please select the reason category for dropout:\n\n";
+    $reply .= "1️⃣  Academic\n";
+    $reply .= "2️⃣  Personal / Family\n";
+    $reply .= "3️⃣  Financial\n";
+    $reply .= "4️⃣  Health\n";
+    $reply .= "5️⃣  Career / Opportunity\n";
+    $reply .= "6️⃣  Other\n\n";
+    $reply .= "👉 Type: dropout academic  (or) dropout financial  (or) dropout health  etc.";
+    sendReply($reply);
+}
+
+/* =========================
+   7B) Dropout — Step B: Show reasons by category (FUZZY MATCHED)
+   ========================= */
+$categoryMap = [
+    "academic"    => "Academic",
+    "personal"    => "Personal",
+    "family"      => "Personal",
+    "financial"   => "Financial",
+    "health"      => "Health",
+    "career"      => "Career",
+    "opportunity" => "Career",
+    "other"       => "Other",
+    "others"      => "Other"
+];
+
+foreach ($categoryMap as $keyword => $dbCategory) {
+    $keywordScore = fuzzyMatch($normalized, $keyword, 0.70);
+    $dropoutScore = fuzzyMatch($normalized, "dropout " . $keyword, 0.70);
+    $reasonScore = fuzzyMatch($normalized, "reason", 0.70);
+    
+    if (($keywordScore > 0.70 || $dropoutScore > 0.70) && $reasonScore <= 0.70) {
+        $stmt = $conn->prepare("
+            SELECT reason_code, reason_text, reason_tamil
+            FROM dropout_reasons
+            WHERE category = ?
+            ORDER BY reason_code ASC
+        ");
+        $stmt->bind_param("s", $dbCategory);
+        $stmt->execute();
+        $res = $stmt->get_result();
+
+        if ($res && $res->num_rows > 0) {
+            $reply  = "📋 Dropout — {$dbCategory} Reasons\n\n";
+            $reply .= "Please type the reason code that applies:\n\n";
+
+            while ($row = $res->fetch_assoc()) {
+                $reply .= "• [{$row['reason_code']}] {$row['reason_text']}\n";
+                if ($language === "Tamil" && !empty($row["reason_tamil"])) {
+                    $reply .= "         ({$row['reason_tamil']})\n";
+                }
+            }
+
+            $reply .= "\n👉 Type the code, e.g.: dropout reason " . ($dbCategory === 'Other' ? 'OT02' : 'AC01');
+            sendReply($reply);
+        }
+        break;
+    }
+}
+
+/* =========================
+   7C) Dropout — Step C: Confirm reason code
+   ========================= */
+if (preg_match('/([A-Za-z]{2}\d{2})/u', $message, $codeMatch)) {
+    $code = strtoupper($codeMatch[1]);
+
+    $stmt = $conn->prepare("
+        SELECT category, reason_text, reason_tamil
+        FROM dropout_reasons
+        WHERE reason_code = ?
+        LIMIT 1
+    ");
+    $stmt->bind_param("s", $code);
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    if ($row = $res->fetch_assoc()) {
+        $category = $row["category"];
+        $reasonDisplay = ($language === "Tamil" && !empty($row["reason_tamil"]))
+            ? $row["reason_text"] . " (" . $row["reason_tamil"] . ")"
+            : $row["reason_text"];
+
+        $reply  = "✅ Dropout Reason Recorded\n\n";
+        $reply .= "Category : " . $category  . "\n";
+        $reply .= "Reason   : " . $reasonDisplay     . "\n\n";
+        $reply .= "📌 Next steps for " . $category . ":\n";
+
+        switch ($category) {
+            case 'Academic':
+                $reply .= "1. Obtain a 'No Objection' letter from your HOD.\n";
+                $reply .= "2. Return all issued library books and settle fines.\n";
+                break;
+
+            case 'Career':
+                $reply .= "1. Submit a copy of your appointment order/exam selection letter.\n";
+                $reply .= "2. Visit the Placement Cell for a clearance signature.\n";
+                break;
+
+            case 'Health':
+                $reply .= "1. Attach an original Medical Certificate from a Govt. Doctor.\n";
+                $reply .= "2. Get the withdrawal form signed by the College Doctor/HOD.\n";
+                break;
+
+            case 'Financial':
+                $reply .= "1. Visit the Accounts Section to verify pending fees.\n";
+                $reply .= "2. Submit a formal letter regarding financial hardship.\n";
+                break;
+
+            default:
+                $reply .= "1. Visit the Admin Office with your department letter.\n";
+                $reply .= "2. Mention the year of discontinuation.\n";
+        }
+
+        $reply .= "3. Submit the final dropout form to the Principal's office.\n";
+        $reply .= "4. Collect your Transfer Certificate (TC) after 3 working days.\n\n";
+        $reply .= "Need more help? Ask about TC, bonafide, or services.";
+        
+        sendReply($reply);
+    } else {
+        sendReply("⚠️ Invalid reason code '{$code}'. Please type a valid code like AC01, PE01, FI02 etc.");
+    }
+}
+
+/* =========================
+   7D) Student request special topics (FUZZY MATCHED)
    ========================= */
 $studentTopics = [
-    "moi" => "Medium of Instruction (MOI)",
-    "medium of instruction" => "Medium of Instruction (MOI)",
-    "genuineness certificate" => "Genuineness Certificate",
-    "dropout" => "Dropout",
-    "disability" => "Disability Student Exemption",
-    "physically challenged" => "Disability Student Exemption"
+    "moi"                    => "Medium of Instruction (MOI)",
+    "medium of instruction"  => "Medium of Instruction (MOI)",
+    "genuineness certificate"=> "Genuineness Certificate",
+    "disability"             => "Disability Student Exemption",
+    "physically challenged"  => "Disability Student Exemption"
 ];
 
 foreach ($studentTopics as $key => $topicName) {
-    if (strpos($normalized, $key) !== false) {
+    if (fuzzyMatch($normalized, $key, 0.75) > 0.75) {
         $stmt = $conn->prepare("
-            SELECT topic, year_of_discontinuation, reason, purpose, year_gap, amount, notes
+            SELECT topic, year_of_discontinuation, reason, purpose, year_gap, amount
             FROM student_requests
             WHERE topic = ?
             LIMIT 1
@@ -287,58 +437,35 @@ foreach ($studentTopics as $key => $topicName) {
 
         if ($row = $res->fetch_assoc()) {
             $reply = "📄 " . $row["topic"] . "\n";
-
-            if (!empty($row["year_of_discontinuation"])) {
-                $reply .= "Year of Discontinuation: " . $row["year_of_discontinuation"] . "\n";
-            }
-            if (!empty($row["reason"])) {
-                $reply .= "Reason: " . $row["reason"] . "\n";
-            }
-            if (!empty($row["purpose"])) {
-                $reply .= "Purpose: " . $row["purpose"] . "\n";
-            }
-            if (!is_null($row["year_gap"])) {
-                $reply .= "Year Gap: " . $row["year_gap"] . "\n";
-            }
-            if (!is_null($row["amount"])) {
-                $reply .= "Amount: Rs." . number_format((float)$row["amount"], 2) . "\n";
-            }
-            if (!empty($row["notes"])) {
-                $reply .= "Notes: " . $row["notes"];
-            }
-
+            if (!empty($row["year_of_discontinuation"])) $reply .= "Year of Discontinuation: " . $row["year_of_discontinuation"] . "\n";
+            if (!empty($row["reason"]))   $reply .= "Reason: "   . $row["reason"]   . "\n";
+            if (!empty($row["purpose"]))  $reply .= "Purpose: "  . $row["purpose"]  . "\n";
+            if (!is_null($row["year_gap"])) $reply .= "Year Gap: " . $row["year_gap"] . "\n";
+            if (!is_null($row["amount"]))   $reply .= "Amount: Rs." . number_format((float)$row["amount"], 2) . "\n";
             sendReply(trim($reply));
         }
     }
 }
 
 /* =========================
-   8) Missing TC / marksheet general
+   8) Missing TC / marksheet general (FUZZY MATCHED)
    ========================= */
-if (
-    strpos($normalized, "missing tc") !== false ||
-    strpos($normalized, "missing marksheet") !== false ||
-    strpos($normalized, "marksheet lost") !== false ||
-    strpos($normalized, "lost marksheet") !== false ||
-    strpos($normalized, "duplicate certificate") !== false ||
-    strpos($normalized, "duplicate certificates") !== false
-) {
+if ($hasTcKeyword) {
     $stmt = $conn->prepare("
-        SELECT year_gap, amount, notes
+        SELECT year_gap, amount
         FROM student_requests
-        WHERE topic = 'Missing TC / Marksheets'
+        WHERE topic LIKE ?
         ORDER BY year_gap ASC
     ");
+    $pattern = "%Duplicate%";
+    $stmt->bind_param("s", $pattern);
     $stmt->execute();
     $res = $stmt->get_result();
 
     $lines = ["📄 Missing TC / Marksheets", "Charges based on year gap:"];
-
     while ($row = $res->fetch_assoc()) {
         if (!is_null($row["year_gap"]) && !is_null($row["amount"])) {
             $lines[] = $row["year_gap"] . " year gap: Rs." . number_format((float)$row["amount"], 2);
-        } elseif (!empty($row["notes"])) {
-            $lines[] = $row["notes"];
         }
     }
 
@@ -346,8 +473,7 @@ if (
 }
 
 /* =========================
-   9) Chatbot intents
-   Longest keyword match first
+   9) Chatbot intents (IMPROVED FUZZY MATCHING)
    ========================= */
 $allMatches = [];
 
@@ -358,55 +484,53 @@ $res = $conn->query("
 
 if ($res) {
     while ($row = $res->fetch_assoc()) {
-        if ($row["language"] !== $language) {
-            continue;
-        }
+        if ($row["language"] !== $language) continue;
 
         $keywordsRaw = trim($row["keywords"]);
-        if ($keywordsRaw === "") {
-            continue;
-        }
+        if ($keywordsRaw === "") continue;
 
-        $keywords = preg_split('/,|\n/u', $keywordsRaw);
-
-        foreach ($keywords as $keyword) {
-            $keyword = trim(mb_strtolower($keyword, 'UTF-8'));
-            if ($keyword === "") {
-                continue;
-            }
-
-            if (strpos($normalized, $keyword) !== false) {
-                $allMatches[] = [
-                    "keyword" => $keyword,
-                    "length" => mb_strlen($keyword, 'UTF-8'),
-                    "response" => $row["response"],
-                    "intent_name" => $row["intent_name"]
-                ];
-            }
+        // Use fuzzy matching instead of strpos
+        $bestKeyword = findBestMatch($normalized, $keywordsRaw, 0.70);
+        
+        if ($bestKeyword !== null) {
+            $score = fuzzyMatch($normalized, $bestKeyword, 0.70);
+            $allMatches[] = [
+                "keyword"     => $bestKeyword,
+                "length"      => mb_strlen($bestKeyword, 'UTF-8'),
+                "score"       => $score,
+                "response"    => $row["response"],
+                "intent_name" => $row["intent_name"]
+            ];
         }
     }
 }
 
 if (!empty($allMatches)) {
+    // Sort by score first, then by length
     usort($allMatches, function($a, $b) {
+        if ($b["score"] !== $a["score"]) {
+            return $b["score"] <=> $a["score"];
+        }
         return $b["length"] <=> $a["length"];
     });
-
     sendReply($allMatches[0]["response"]);
 }
 
 /* =========================
-   10) Admin services list
+   10) Admin services list (FUZZY MATCHED)
    ========================= */
-if (
-    strpos($normalized, "services") !== false ||
-    strpos($normalized, "service") !== false ||
-    strpos($normalized, "available services") !== false ||
-    strpos($normalized, "available service") !== false ||
-    strpos($normalized, "admin services") !== false ||
-    strpos($normalized, "what services available") !== false ||
-    strpos($normalized, "student services") !== false
-) {
+$servicesKeywords = ["services", "service", "available services", "available service", 
+                     "admin services", "what services available", "student services"];
+
+$isServicesQuery = false;
+foreach ($servicesKeywords as $keyword) {
+    if (fuzzyMatch($normalized, $keyword, 0.75) > 0.75) {
+        $isServicesQuery = true;
+        break;
+    }
+}
+
+if ($isServicesQuery) {
     $res = $conn->query("SELECT service_name FROM admin_services ORDER BY id ASC");
     $services = [];
 
@@ -417,45 +541,37 @@ if (
     }
 
     if (!empty($services)) {
-        sendReply("Available services: " . implode(", ", $services));
+        $formatted = "Available services:\n\n";
+        foreach ($services as $index => $service) {
+            $formatted .= ($index + 1) . ". " . $service . "\n";
+        }
+        sendReply(trim($formatted));
     }
 }
 
 /* =========================
-   11) Admin services direct-name lookup
+   11) Admin services direct-name lookup (FUZZY MATCHED)
    ========================= */
-$res = $conn->query("SELECT service_name, issued_by, purpose, requirements, fees, notes FROM admin_services");
+$res = $conn->query("SELECT service_name, issued_by, purpose, requirements, fees FROM admin_services");
 
 if ($res) {
     while ($row = $res->fetch_assoc()) {
         $service = mb_strtolower($row["service_name"], 'UTF-8');
+        $score = fuzzyMatch($normalized, $service, 0.70);
 
-        if (strpos($normalized, $service) !== false) {
+        if ($score > 0.70) {
             $reply = "Service: " . $row["service_name"] . "\n";
-
-            if (!empty($row["issued_by"])) {
-                $reply .= "Issued By: " . $row["issued_by"] . "\n";
-            }
-            if (!empty($row["purpose"])) {
-                $reply .= "Purpose: " . $row["purpose"] . "\n";
-            }
-            if (!empty($row["requirements"])) {
-                $reply .= "Requirements: " . $row["requirements"] . "\n";
-            }
-            if (!is_null($row["fees"])) {
-                $reply .= "Fees: Rs." . number_format((float)$row["fees"], 2) . "\n";
-            }
-            if (!empty($row["notes"])) {
-                $reply .= "Notes: " . $row["notes"];
-            }
-
+            if (!empty($row["issued_by"]))    $reply .= "Issued By: "    . $row["issued_by"]    . "\n";
+            if (!empty($row["purpose"]))      $reply .= "Purpose: "      . $row["purpose"]      . "\n";
+            if (!empty($row["requirements"])) $reply .= "Requirements: " . $row["requirements"] . "\n";
+            if (!is_null($row["fees"]))       $reply .= "Fees: Rs."      . number_format((float)$row["fees"], 2) . "\n";
             sendReply(trim($reply));
         }
     }
 }
 
 /* =========================
-   12) Policies fallback
+   12) Policies fallback (FUZZY MATCHED)
    ========================= */
 $stmt = $conn->prepare("
     SELECT policy_title, policy_description, value_text, fine_applicable, installment_allowed
@@ -468,24 +584,19 @@ $res = $stmt->get_result();
 
 while ($row = $res->fetch_assoc()) {
     $title = mb_strtolower($row["policy_title"], 'UTF-8');
+    $score = fuzzyMatch($normalized, $title, 0.70);
 
-    if (strpos($normalized, $title) !== false) {
+    if ($score > 0.70) {
         $reply = $row["policy_title"] . "\n" . $row["policy_description"];
-
-        if (!empty($row["value_text"])) {
-            $reply .= "\nInfo: " . $row["value_text"];
-        }
-
-        if (!is_null($row["fine_applicable"])) {
-            $reply .= "\nFine Applicable: " . ($row["fine_applicable"] ? "Yes" : "No");
-        }
-
-        if (!is_null($row["installment_allowed"])) {
-            $reply .= "\nInstallment Allowed: " . ($row["installment_allowed"] ? "Yes" : "No");
-        }
-
+        if (!empty($row["value_text"]))        $reply .= "\nInfo: "                . $row["value_text"];
+        if (!is_null($row["fine_applicable"]))  $reply .= "\nFine Applicable: "    . ($row["fine_applicable"] ? "Yes" : "No");
+        if (!is_null($row["installment_allowed"])) $reply .= "\nInstallment Allowed: " . ($row["installment_allowed"] ? "Yes" : "No");
         sendReply($reply);
     }
+}
+
+if (preg_match('/^\d{4}$/', $normalized)) {
+    sendReply("I noticed you entered a year ($normalized). If this is for a Dropout request, please ensure you have first provided a reason code (e.g., 'dropout reason AC01').");
 }
 
 /* =========================
