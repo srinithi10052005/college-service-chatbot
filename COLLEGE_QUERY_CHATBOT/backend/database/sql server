@@ -103,7 +103,7 @@ N'🚪 அவுட்பாஸ் நடைமுறை — SDNB Vaishnav Colle
 🔐 5: பாதுகாப்பாளரிடம் முதன்மை வாயிலில் அவுட்பாஸ் காட்டுங்கள்.
 🔄 6: Admin Office-ற்கு அவுட்பாஸ் திருப்பி அளியுங்கள்.
 
-📞 தொடர்பு: Admin Office — நீட்சி 105
+📞 தொடர்பு: Admin Office — Evening Block
 🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
 N'2-4 மணிநேரம்', NULL, N'Admin Office, முதன்மை கட்டடம், தாழ்வாரம்'),
 
@@ -136,7 +136,7 @@ N'📜 Bonafide Certificates — SDNB Vaishnav College
 
 📍 இடம்: Admin Office, முதன்மை கட்டடம், தாழ்வாரம்
 🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM
-📞 தொடர்பு: நீட்சி 105',
+📞 தொடர்பு: Admin Office
 NULL, NULL, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
 
 (7, 4, N'English', N'tc_procedure',
@@ -170,7 +170,7 @@ N'🎓 Transfer Certificate — SDNB Vaishnav College (பட்டம் பெ
 📂 படி 6: Admin Office-ற்கு இறுதி ஆவணங்களை சமர்ப்பிக்கவும்.
 🏅 படி 7: 7–10 வேலை நாட்களுக்குப் பிறகு TC சான்றிதழ் சேகரிக்கவும்.
 
-📞 தொடர்பு: Admin Office — நீட்சி 105
+📞 தொடர்பு: Admin Office — Evening Office
 🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
 N'7-10 working days', NULL, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
 
@@ -211,7 +211,7 @@ N'🪪 ID அட்டை மீண்டும் வெளியீடு — 
 🔐 படி 6: Campus Security-ற்கு ரசீதுடன் புகாரளியுங்கள்.
 ✅ படி 7: 5–7 வேலை நாட்களுக்குப் பிறகு புதிய ID சேகரிக்கவும்.
 
-📞 தொடர்பு: நீட்சி 105
+📞 தொடர்பு: Admin Office
 🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM
 ⚠️ குறிப்பு: ID இல்லாமல் வாயிலில் நுழைய தடுக்கப்படலாம்.',
 N'5-7 working days', 250.00, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
@@ -280,7 +280,7 @@ N'🎓 Transfer Certificate — SDNB Vaishnav College (நிறுத்தி�
 💵 படி 7: நிலுவைக் கட்டணம் இருந்தால் செலுத்துங்கள்.
 🏅 படி 8: 7–10 நாட்களுக்குப் பிறகு TC சேகரிக்கவும்.
 
-📞 தொடர்பு: நீட்சி 105
+📞 தொடர்பு: Admin Office
 🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
 N'7-10 working days', NULL, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
 
@@ -300,7 +300,7 @@ N'📄 General Bonafide Certificate
 ✅  7: Collect after 2–3 days.
 
 🗂️ Required: Valid ID Card | Filled Form | Department & Union seals
-📞 Contact: Admin Office — Extension 105
+📞 Contact: Admin Office
 🕐 Mon–Fri, 9:00 AM – 4:30 PM',
 N'2-3 working days', NULL, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
 
