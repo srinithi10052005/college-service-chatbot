@@ -1,8 +1,3 @@
--- ============================================================
--- COLLEGE_DB ENHANCED — Additional Keywords & Missing Intents
--- Run this AFTER the original schema/seed script
--- ============================================================
-
 USE college_db;
 GO
 
