@@ -1,7 +1,14 @@
+-- ============================================================
+-- COLLEGE_DB ENHANCED — Additional Keywords & Missing Intents
+-- Run this AFTER the original schema/seed script
+-- ============================================================
+
 USE college_db;
 GO
 
-
+-- ============================================================
+-- SECTION 1 ▸ KEYWORD EXPANSIONS FOR EXISTING INTENTS
+-- ============================================================
 
 -- Intent 1 — English Greeting
 UPDATE chatbot_intents SET keywords =
@@ -486,6 +493,11 @@ N'🍽️ College Canteen — SDNB Vaishnav College
    — Collect token from Admin Office (IT Block)
    — Present token at canteen counter
 
+🕐 Canteen Timings:
+   Breakfast: 8:00 AM – 9:00 AM
+   Lunch: 12:00 PM – 2:00 PM
+   Snacks: 3:00 PM – 4:00 PM
+   (Timings may vary — check canteen notice board)
 
 📋 Note: Only students with valid student ID can avail subsidized meals.
 💡 Tip: Carry your ID card for token collection at Admin Office.',
@@ -677,10 +689,13 @@ N'⏰ College & Office Timings — SDNB Vaishnav College
    🕐 Saturday: 9:00 AM – 1:00 PM
 
 🍽️ Canteen:
-   🕐 Break timing: As per your respective timing. 
- Hostel Office: As per hostel notice board
- 
-⚠️a Timings may change on holidays and exam days — check college notice board.',
+   🕐 Breakfast: 8:00 AM – 9:00 AM
+   🕐 Lunch: 12:00 PM – 2:00 PM
+   🕐 Snacks: 3:00 PM – 4:00 PM
+
+🏠 Hostel Office: As per hostel notice board
+
+⚠️ Timings may change on holidays and exam days — check college notice board.',
 NULL, NULL, NULL),
 
 (59, 1, N'Tamil', N'college_timings',
@@ -700,7 +715,9 @@ N'⏰ கல்லூரி & அலுவலக நேரம் — SDNB Vaishn
    🕐 சனிக்கிழமை: 9:00 AM – 1:00 PM
 
 🍽️ கேன்டீன்:
-   🕐 இடைவேளை நேரம்: உங்கள் அவரவர் நேரப்படி.
+   🕐 காலை உணவு: 8:00 AM – 9:00 AM
+   🕐 மதிய உணவு: 12:00 PM – 2:00 PM
+   🕐 சிற்றுண்டி: 3:00 PM – 4:00 PM
 
 ⚠️ விடுமுறை நாட்கள் மற்றும் தேர்வு நாட்களில் நேரம் மாறலாம்.',
 NULL, NULL, NULL),
@@ -810,7 +827,7 @@ N'📊 Exam Results — SDNB Vaishnav College
 🌐 Results are published by: University of Madras / Madras University
 
 📋 How to Check:
-   1️⃣ Visit: https:https://www.sdnbvc.edu.in/
+   1️⃣ Visit: https://www.unom.ac.in (University of Madras official portal)
    2️⃣ Navigate to Student Services → Exam Results.
    3️⃣ Enter your Register Number and Date of Birth.
    4️⃣ Download and save your result.
@@ -834,7 +851,7 @@ N'📊 தேர்வு முடிவுகள் — SDNB Vaishnav College
 🌐 முடிவுகள் வெளியிடப்படும் இடம்: University of Madras / Madras University
 
 📋 சரிபார்க்கும் முறை:
-   1️⃣ இணையதளம்: https://www.sdnbvc.edu.in/
+   1️⃣ இணையதளம்: https://www.unom.ac.in
    2️⃣ Student Services → Exam Results க்கு செல்லுங்கள்.
    3️⃣ உங்கள் Register Number மற்றும் பிறந்த தேதி உள்ளிடுங்கள்.
    4️⃣ முடிவை பதிவிறக்கி சேமியுங்கள்.
