@@ -1,615 +1,941 @@
--- =========================
--- DATABASE CREATION
--- =========================
-IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'college_db')
-BEGIN
-    CREATE DATABASE college_db;
-END
-GO
-
 USE college_db;
 GO
 
--- =========================
--- DROP TABLES (Child first, then Parent)
--- =========================
-DROP TABLE IF EXISTS chatbot_intents;
-DROP TABLE IF EXISTS policies;
-DROP TABLE IF EXISTS student_requests;
-DROP TABLE IF EXISTS admin_services;
-DROP TABLE IF EXISTS attendance_categories;
-DROP TABLE IF EXISTS dropout_reasons;
-DROP TABLE IF EXISTS modules;
+
+
+-- Intent 1 — English Greeting
+UPDATE chatbot_intents SET keywords =
+N'hi, hello, hey, good morning, good afternoon, good evening, help, start, begin, assist, support, query, question, what can you do, who are you, asknova, bot, chatbot, welcome, i need help, how does this work, get started, help me'
+WHERE intent_id = 1;
+
+-- Intent 2 — Tamil Greeting
+UPDATE chatbot_intents SET keywords =
+N'வணக்கம், ஹாய், ஹலோ, காலை வணக்கம், மாலை வணக்கம், உதவி, தொடங்கு, ஆரம்பி, என்ன செய்யலாம், உதவி வேண்டும், கேள்வி கேட்க, asknova, chatbot, bot, நான் யாரிடம் பேசுகிறேன், எனக்கு உதவுங்கள்'
+WHERE intent_id = 2;
+
+-- Intent 3 — English Outpass
+UPDATE chatbot_intents SET keywords =
+N'outpass, out pass, how to get outpass, outpass procedure, gate pass, leave permission, campus leave, permission to leave, permission to go outside, campus exit permission, go outside permission, exit campus, temporary leave, leave campus, step out, go home early, leave early, daytime leave, campus exit, leave approval, outpass form, outpass register, security gate pass'
+WHERE intent_id = 3;
+
+-- Intent 4 — Tamil Outpass
+UPDATE chatbot_intents SET keywords =
+N'அவுட்பாஸ், வெளியே செல்ல அனுமதி, outpass procedure, கேம்பஸ் விட்டு செல்ல, வெளியே போக, gate pass, விடுப்பு, வெளிச்செல்ல, வெளி அனுமதி, வெளியே செல்ல படிவம், தற்காலிக விடுப்பு, வெளியே போக அனுமதி கடிதம்'
+WHERE intent_id = 4;
+
+-- Intent 5 — English Bonafide (main menu)
+UPDATE chatbot_intents SET keywords =
+N'bonafide, bonafide certificate, bonafide letter, student certificate, proof of enrollment, student proof, bonafide types, types of bonafide, which bonafide, bonafide apply, bonafide request, bonafide form, i need bonafide, how to get bonafide'
+WHERE intent_id = 5;
+
+-- Intent 6 — Tamil Bonafide (main menu)
+UPDATE chatbot_intents SET keywords =
+N'போனாபைடு, போனாபைடு சான்றிதழ், மாணவர் சான்றிதழ், படிக்கிறேன் என்று சான்றிதழ், bonafide வேண்டும், சான்றிதழ் வேண்டும், bonafide letter, bonafide types, மாணவர் அடையாளம், bonafide form, bonafide request'
+WHERE intent_id = 6;
+
+-- Intent 7 — English TC (Passout)
+UPDATE chatbot_intents SET keywords =
+N'tc, tc procedure, transfer certificate, how to get tc, tc process, certificate process, tc for passout, passout tc, final year tc, completed course tc, degree completed tc, graduated tc, tc after graduation, tc after degree, tc collection, tc documents, tc clearance, tc steps, college leaving certificate'
+WHERE intent_id = 7;
+
+-- Intent 8 — Tamil TC (Passout)
+UPDATE chatbot_intents SET keywords =
+N'tc, transfer certificate, tc நடைமுறை, மாற்றுச் சான்றிதழ், படிப்பு முடித்தவர்கள் tc, பட்டதாரி tc, tc எடுப்பது எப்படி, tc கோர, இறுதி ஆண்டு tc, graduation tc, tc படிவம், tc ஆவணங்கள்'
+WHERE intent_id = 8;
+
+-- Intent 9 — English Missing ID
+UPDATE chatbot_intents SET keywords =
+N'missing id, id card lost, lost id, lost id card, id lost, duplicate id, duplicate id card, id card procedure, missing id procedure, id reissue, replace id card, new id card, broken id, damaged id, id card stolen, stolen id, id card misplaced, id replacement, college id lost, student id lost, how to get new id, provisional id'
+WHERE intent_id = 9;
+
+-- Intent 10 — Tamil Missing ID
+UPDATE chatbot_intents SET keywords =
+N'மிஸ்ஸிங் ஐடி, அடையாள அட்டை தொலைந்தது, id card காணவில்லை, id card தொலைந்தது, புதிய id வேண்டும், duplicate id, id மாற்று, id card திருடுபட்டது, id card சேதமடைந்தது, id card replacement, provisional id, தற்காலிக id'
+WHERE intent_id = 10;
+
+-- Intent 11 — English Exam Eligibility
+UPDATE chatbot_intents SET keywords =
+N'write exam, exam procedure, exam eligibility, eligible to write exam, can i write exam, how to write exam, can i attend exam with low attendance, attendance for exam, minimum attendance exam, exam allowed, 75 percent attendance, attendance shortage exam, exam ban, detained, exam detention, can i sit for exam, attendance cut, shortage attendance exam, will i be allowed to write exam'
+WHERE intent_id = 11;
+
+-- Intent 12 — Tamil Exam Eligibility
+UPDATE chatbot_intents SET keywords =
+N'exam எழுத, exam eligibility, தேர்வு எழுதலாமா, தேர்வு தகுதி, attendance குறைவு exam, 75 சதவீதம் attendance, exam ban, தேர்வு தடை, exam எழுத முடியுமா, attendance shortage, தேர்வு கட்டுப்பாடு, தேர்வுக்கு அனுமதி'
+WHERE intent_id = 12;
+
+-- Intent 13 — English TC Discontinued
+UPDATE chatbot_intents SET keywords =
+N'tc discontinued, tc for discontinued, discontinued tc, dropout tc, left course tc, drop out, left college tc, stopped studying tc, quit college tc, college dropout tc, discontinued studies tc, leaving college tc, i want to leave college, tc if i leave, withdrawal tc, voluntary withdrawal, college withdrawal'
+WHERE intent_id = 13;
+
+-- Intent 14 — Tamil TC Discontinued
+UPDATE chatbot_intents SET keywords =
+N'படிப்பை நிறுத்தினால் tc, discontinued tc, dropout tc, transfer certificate, கல்லூரி விட்டுவிட்டால் tc, படிப்பை விட்டுவிட்டால் tc, நிறுத்தினால் சான்றிதழ், கல்லூரி விடுவதற்கு tc, படிப்பை கைவிட்டால், tc நிறுத்தல்'
+WHERE intent_id = 14;
+
+-- Intent 15 — English General Bonafide
+UPDATE chatbot_intents SET keywords =
+N'general bonafide certificate, general bonafide, student bonafide, bonafide for scholarship, bonafide for loan, bonafide for bank loan, bonafide for visa, bonafide for job, bonafide for ncc, bonafide for nss, general certificate, basic bonafide, standard bonafide, regular bonafide, simple bonafide'
+WHERE intent_id = 15;
+
+-- Intent 16 — English Course Bonafide
+UPDATE chatbot_intents SET keywords =
+N'course bonafide, course bonafide certificate, course enrollment certificate, bonafide for semester, bonafide for admission, course proof, enrollment verification, studying certificate, bonafide for lateral entry, bonafide for transfer admission, course details certificate'
+WHERE intent_id = 16;
+
+-- Intent 17 — English Passport Bonafide
+UPDATE chatbot_intents SET keywords =
+N'passport bonafide, passport bonafide certificate, bonafide for passport, passport application bonafide, passport college letter, student passport letter, bonafide passport purpose, how to apply passport bonafide, passport clearance college, government passport bonafide'
+WHERE intent_id = 17;
+
+-- Intent 18 — English Bonafide Without Fee
+UPDATE chatbot_intents SET keywords =
+N'bonafide without fee, bonafide without fee payment, no fee bonafide, free bonafide special, waiver bonafide, bonafide fee waiver, financial hardship bonafide, poor student bonafide, bpl bonafide, bonafide for bpl student, single parent bonafide, orphan bonafide, scholarship bonafide waiver'
+WHERE intent_id = 18;
+
+-- Intent 21 — English Marksheet Lost
+UPDATE chatbot_intents SET keywords =
+N'marksheet lost, lost marksheet, my marksheet is lost, certificate lost, duplicate marksheet, duplicate certificate, original certificate lost, marks card lost, original mark sheet, get duplicate marks, reissue marksheet, lost original degree, duplicate degree, original document lost, exam certificate lost'
+WHERE intent_id = 21;
+
+-- Intent 22 — Tamil Marksheet Lost
+UPDATE chatbot_intents SET keywords =
+N'மார்க்ஷீட் தொலைந்தது, marksheet lost, certificate lost, duplicate marksheet, original certificate தொலைந்தது, marks card தொலைந்தது, duplicate certificate வேண்டும், மூல சான்றிதழ் இல்லை, நகல் மார்க்ஷீட், duplicate marks card'
+WHERE intent_id = 22;
+
+GO
+PRINT N'✅ Section 1 complete — Keywords updated for all existing intents';
 GO
 
--- =========================
--- 1. MODULES TABLE
--- =========================
-CREATE TABLE modules (
-    module_id INT IDENTITY(1,1) PRIMARY KEY,
-    module_name NVARCHAR(100) NOT NULL UNIQUE
-);
-GO
-
-SET IDENTITY_INSERT modules ON;
-INSERT INTO modules (module_id, module_name) VALUES
-(1, N'🏠 General'),
-(2, N'💰 Fees'),
-(3, N'📋 Leave'),
-(4, N'📜 Certificate'),
-(5, N'🎓 Admission'),
-(6, N'📅 Attendance');
-SET IDENTITY_INSERT modules OFF;
-GO
-
--- =========================
--- 2. CHATBOT INTENTS TABLE
--- =========================
-CREATE TABLE chatbot_intents (
-    intent_id INT IDENTITY(1,1) PRIMARY KEY,
-    module_id INT NOT NULL,
-    language NVARCHAR(20) NOT NULL,
-    intent_name NVARCHAR(100) NOT NULL,
-    keywords NVARCHAR(MAX) NOT NULL,
-    response NVARCHAR(MAX) NOT NULL,
-    processing_time NVARCHAR(50) DEFAULT NULL,
-    fees DECIMAL(10,2) DEFAULT NULL,
-    office_location NVARCHAR(255) DEFAULT NULL,
-    FOREIGN KEY (module_id) REFERENCES modules(module_id)
-);
-GO
+-- ============================================================
+-- SECTION 2 ▸ NEW INTENTS (Tamil versions of missing English
+--             intents + entirely new topic coverage)
+-- ============================================================
 
 SET IDENTITY_INSERT chatbot_intents ON;
+
+-- ─────────────────────────────────────────────────────────────
+-- 2A ▸ TAMIL VERSIONS OF BONAFIDE SUB-TYPES (previously missing)
+-- ─────────────────────────────────────────────────────────────
+
 INSERT INTO chatbot_intents (intent_id, module_id, language, intent_name, keywords, response, processing_time, fees, office_location) VALUES
 
-(1, 1, N'English', N'greeting',
-N'hi, hello, hey, good morning, good afternoon, good evening',
-N'👋 Welcome to ASKNOVA! 🎓
-I am your smart service assistant. How can I help you today? 😊
-Type your query and I will guide you right away! ✅',
-NULL, NULL, NULL),
+(30, 4, N'Tamil', N'bonafide_general',
+N'general bonafide certificate, general bonafide, student bonafide, bonafide scholarship, bonafide loan, bonafide bank, bonafide visa, bonafide job, general bonafide form, bonafide விண்ணப்பம்',
+N'📄 General Bonafide Certificate — SDNB Vaishnav College
+🆓 கட்டணம்: இலவசம் | ⏱️ 2–3 வேலை நாட்கள்
 
-(2, 1, N'Tamil', N'greeting',
-N'வணக்கம், ஹாய், ஹலோ, காலை வணக்கம், மாலை வணக்கம்',
-N'👋 ASKNOVA-க்கு வரவேற்கிறோம்! 🎓
-நான் உங்கள் சேவை உதவியாளர். உங்கள் கேள்விகளுக்கு உதவ தயாராக உள்ளேன். 😊
-தங்கள் கேள்வியை தட்டச்சு செய்யுங்கள்! ✅',
-NULL, NULL, NULL),
+🎯 நோக்கம்: உதவித்தொகை, வங்கிக் கடன், விசா, வேலை விண்ணப்பம் போன்றவற்றிற்கு மாணவர் நிலை நிரூபிக்க.
 
-(3, 3, N'English', N'outpass',
-N'outpass, out pass, how to get outpass, outpass procedure, gate pass, leave permission, campus leave, permission to leave, permission to go outside, campus exit permission, go outside permission, exit campus',
-N'🚪 Outpass Procedure ⏱️ Processing Time: 2–4 Hours
+📝 படி 1: Admin Office-ற்குச் செல்லுங்கள் (முதன்மை கட்டடம் (IT Block), தாழ்வாரம்).
+📋 படி 2: General Bonafide கோரிக்கை படிவம் பெறுங்கள்.
+✍️ படி 3: பதிவு எண், பெயர், துறை, ஆண்டு நிரப்புங்கள்.
+🏫 படி 4: Class Incharge கையொப்பம் மற்றும் முத்திரைக்கு துறைக்கு செல்லுங்கள்.
+🤝 படி 5: College Union கையொப்பம் பெறுங்கள்.
+🏛️ படி 6: நிரப்பிய படிவத்துடன் Admin Office-க்கு திரும்புங்கள்.
+✅ படி 7: 2–3 நாட்களுக்குப் பிறகு சான்றிதழ் சேகரிக்கவும்.
 
-📝 1: Visit your Class Incharge in your department.
-✍️ 2: Get written permission from HOD 
-🏛️ 3: Visit Admin Office (Main Building(IT BLOCK), Ground Floor) with approval letter.
-📒  4: Enter your details in outpass register with OUT and IN times.
-🔐  5: Show outpass at main gate to security.
-🔄  6: Return outpass upon returning to campus.
-
-📞 Contact: Admin Office — Evening Block 
-🕐 Timings: Mon–Fri, 9:00 AM – 4:30 PM',
-N'2-4 hours', NULL, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
-
-(4, 3, N'Tamil', N'outpass',
-N'அவுட்பாஸ், வெளியே செல்ல அனுமதி, outpass procedure',
-N'🚪 அவுட்பாஸ் நடைமுறை — SDNB Vaishnav College
-⏱️ செயல்படுத்தும் நேரம்: 2–4 மணிநேரம்
-
-📝 1: உங்கள் Class Incharge-ஐ சந்தியுங்கள்.
-✍️ படி 2: HOD-ஐ தொடர்புகொண்டு அனுமதிப்பத்திரம் பெறுங்கள் .
-🏛️  3: அனுமதிப்பத்திரத்துடன் Admin Office-ற்குச் செல்லுங்கள் (முதன்மை கட்டடம், தாழ்வாரம்).
-📒  4: அவுட்பாஸ் பதிவேட்டில் நுழைந்த மற்றும் வெளியேறிய நேரம் பதிவு செய்யுங்கள்.
-🔐 5: பாதுகாப்பாளரிடம் முதன்மை வாயிலில் அவுட்பாஸ் காட்டுங்கள்.
-🔄 6: Admin Office-ற்கு அவுட்பாஸ் திருப்பி அளியுங்கள்.
-
-📞 தொடர்பு: Admin Office — Evening Block
-🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
-N'2-4 மணிநேரம்', NULL, N'Admin Office, முதன்மை கட்டடம், தாழ்வாரம்'),
-
-(5, 4, N'English', N'bonafide',
-N'bonafide',
-N'📜 Bonafide Certificates — SDNB Vaishnav College
-
-1️⃣ General Bonafide Certificate — 🆓 FREE | ⏱️ 2–3 days
-2️⃣ Course Bonafide — 🆓 FREE | ⏱️ 3–4 days
-3️⃣ Passport Bonafide — 💰 Rs.50 | ⏱️ 2–3 days
-4️⃣ Bonafide Without Fee — 🆓 FREE (Special Permission) | For genuine financial hardship
-
-💬 Please type: general bonafide, course bonafide, passport bonafide, or bonafide without fee
-
-📍 Location: Admin Office, Main Building(IT BLOCK), Ground Floor
-🕐 Timings: Mon–Fri, 9:00 AM – 4:30 PM
-📞 Contact: Evening Office',
-NULL, NULL, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
-
-(6, 4, N'Tamil', N'bonafide',
-N'போனாபைடு, போனாபைடு சான்றிதழ்',
-N'📜 Bonafide Certificates — SDNB Vaishnav College
-
-1️⃣ General Bonafide — 🆓 இலவசம் | ⏱️ 2–3 நாட்கள்
-2️⃣ Course Bonafide — 🆓 இலவசம் | ⏱️ 3–4 நாட்கள்
-3️⃣ Passport Bonafide — 💰 Rs.50 | ⏱️ 2–3 நாட்கள்
-4️⃣ Fee இல்லாமல் Bonafide — 🆓 இலவசம் (சிறப்பு அனுமதி) | நிதி சிரமத்தில் உள்ளவர்களுக்கு
-
-💬 Type செய்யவும்: general bonafide, course bonafide, passport bonafide, bonafide without fee
-
-📍 இடம்: Admin Office, முதன்மை கட்டடம், தாழ்வாரம்
-🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM
-📞 தொடர்பு: Admin Office
-NULL, NULL, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
-
-(7, 4, N'English', N'tc_procedure',
-N'tc, tc procedure, transfer certificate, how to get tc, tc process, certificate process, tc for passout, passout tc',
-N'🎓 Transfer Certificate — (Pass Out Students)
-⏱️ Processing: 7–10 Working Days
-
-📝  1: Visit Department with application form.
-✍️ 2: Get HOD signature and stamp.
-📚  3: Library clearance (return all books).
-🏠  4: Hostel clearance (if resident).
-🏛️ 5: Complete office clearance at Admin Office with receipts.
-📂  6: Submit final documents to Admin Office.
-🏅  7: Collect TC Certificate after 7–10 days.
-
-📍From respective Department | Library (GB Block) | Hostel (Behind Gate) | Admin Office (Main Building(IT BLOCK), GF)
-📞 Contact: Admin Office — Evening Block
-🕐 Mon–Fri, 9:00 AM – 4:30 PM',
-N'7-10 working days', NULL, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
-
-(8, 4, N'Tamil', N'tc_procedure',
-N'tc, transfer certificate, tc நடைமுறை',
-N'🎓 Transfer Certificate — SDNB Vaishnav College (பட்டம் பெற்ற மாணவர்கள்)
-⏱️ செயல்படுத்தும் நேரம்: 7–10 வேலை நாட்கள்
-
-📝 படி 1: விண்ணப்பப் படிவத்துடன் துறை அலுவலகத்திற்குச் செல்லுங்கள்.
-✍️ படி 2: HOD கையொப்பம் மற்றும் முத்திரை பெறுங்கள்.
-📚 படி 3: நூலகம் (புத்தகங்களை திருப்பி அளியுங்கள்).
-🏠 படி 4: விடுதி சரியாக்கல் (பொருந்தினால்).
-🏛️ படி 5: Admin Office-ற்கு ரசீதுகளுடன் சரியாக்கல் முடிக்கவும்.
-📂 படி 6: Admin Office-ற்கு இறுதி ஆவணங்களை சமர்ப்பிக்கவும்.
-🏅 படி 7: 7–10 வேலை நாட்களுக்குப் பிறகு TC சான்றிதழ் சேகரிக்கவும்.
-
-📞 தொடர்பு: Admin Office — Evening Office
-🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
-N'7-10 working days', NULL, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
-
-(9, 3, N'English', N'missing_id',
-N'missing id, id card lost, lost id, lost id card, id lost, duplicate id, duplicate id card, id card procedure, missing id procedure',
-N'🪪 Missing ID Card Reissue 
-⏱️ Processing: 5–7 Working Days | 💰 Fee: Rs.250
-
-⚠️ 1: Inform Class Incharge within respective shift timing.
-✍️ 2: Inform HOD in writing.
-🏛️  3: Visit Admin Office (Main Building, GF) with:
-   📄 Lost ID Declaration Form
-   📩 Class Incharge notification
-   📜 HOD Approval Letter
-💵 4: Pay Rs.250 at Admin Office.
-🪪 5: Get provisional ID receipt (valid 15 days).
-🔐 6: Report to Campus Security with receipt.
-✅  7: Collect new ID after 5–7 days.
-
-📞 Contact: Admin Office — Evening Office 
-🕐 Mon–Fri, 9:00 AM – 4:30 PM
-⚠️ Note: Without ID, entry may be restricted at gates.',
-N'5-7 working days', 250.00, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
-
-(10, 3, N'Tamil', N'missing_id',
-N'மிஸ்ஸிங் ஐடி, அடையாள அட்டை தொலைந்தது, id card காணவில்லை',
-N'🪪 ID அட்டை மீண்டும் வெளியீடு — SDNB Vaishnav College
-⏱️ 5–7 வேலை நாட்கள் | 💰 கட்டணம்: Rs.250
-
-⚠️ படி 1: 24 மணிநேரத்திற்குள் Class Incharge-க்கு தகவல் சொல்லுங்கள்.
-✍️ படி 2: HOD-க்கு எழுத்துப்பூர்வ தகவல் சொல்லுங்கள்.
-🏛️ படி 3: Admin Office-ற்குச் செல்லுங்கள்:
-   📄 Lost ID பிரகடன படிவம்
-   📩 Class Incharge அறிவிப்பு
-   📜 HOD அனுமதி கடிதம்
-💵 படி 4: Cash Counter-ல் Rs.250 செலுத்துங்கள்.
-🪪 படி 5: 15 நாட்கள் செல்லுபடியாகும் தற்காலிக ID ரசீது பெறுங்கள்.
-🔐 படி 6: Campus Security-ற்கு ரசீதுடன் புகாரளியுங்கள்.
-✅ படி 7: 5–7 வேலை நாட்களுக்குப் பிறகு புதிய ID சேகரிக்கவும்.
-
-📞 தொடர்பு: Admin Office
-🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM
-⚠️ குறிப்பு: ID இல்லாமல் வாயிலில் நுழைய தடுக்கப்படலாம்.',
-N'5-7 working days', 250.00, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
-
-(11, 6, N'English', N'exam_eligibility',
-N'write exam, exam procedure, exam eligibility, eligible to write exam, can i write exam, how to write exam, can i attend exam with low attendance',
-N'📊 Exam Eligibility Based on Attendance 
-
-✅ Category A (75% or more): ELIGIBLE — Write exam without restrictions.
-⚠️ Category B (65–74%): ELIGIBLE with Condonation — Pay 💰 Rs.250 fee 3 days before exam.
-❌ Category C (50–64%): NOT ELIGIBLE — Repeat course next semester. Contact HOD for re-registration.
-🚫 Category D (Less than 50%): NOT ELIGIBLE — Repeat entire course. Complete re-registration required.
-
-💵 Condonation Payment: Admin Office, Cash Counter
-📞 Contact: Admin Office — Evening Block 
-🕐 Mon–Fri, 9:00 AM – 4:30 PM
-💡 Tip: Maintain 75%+ attendance to avoid complications! 😊',
-NULL, 250.00, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
-
-(12, 6, N'Tamil', N'exam_eligibility',
-N'exam எழுத, exam eligibility, தேர்வு எழுதலாமா',
-N'📊 Attendance-ல் அடிப்படையாக தேர்வு தகுதி — SDNB Vaishnav College
-
-✅ Category A (75% அல்லது அதற்கு மேல்): தகுதி உள்ளது — கட்டுப்பாடு இல்லாமல் தேர்வு எழுதலாம்.
-⚠️ Category B (65–74%): Condonation உடன் தகுதி — 💰 Rs.250 fee தேர்வுக்கு 3 நாட்களுக்கு முன் செலுத்துங்கள்.
-❌ Category C (50–64%): தகுதி இல்லை — அடுத்த செமிஸ்டரில் மீண்டும் படிக்கவும்.
-🚫 Category D (50% குறைவு): தகுதி இல்லை — முழு பாடம் மீண்டும் படிக்கவும்.
-
-💵 Condonation செலுத்தும் இடம்: Admin Office, Cash Counter
-📞 தொடர்பு: நீட்சி 105
-🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM
-💡 குறிப்பு: 75% attendance வைத்திருங்கள்! 😊',
-NULL, 250.00, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
-
-(13, 4, N'English', N'tc_discontinued',
-N'tc discontinued, tc for discontinued, discontinued tc, dropout tc, left course tc, drop out',
-N'🎓 Transfer Certificate  (Discontinued/Dropout Students)
-⏱️ Processing: 7–10 Working Days
-
-📝 1: Contact HOD with discontinuation letter.
-📋 2: Collect TC Application Form from Department Office.
-✍️ 3: Get approval from Class Incharge and HOD (Signature & Stamp).
-📚 4: Get Library clearance (return all books).
-🏠 5: Get Hostel clearance if resident.
-🏛️  6: Visit Admin Office with all documents:
-   📄 TC Form | 📜 HOD Letter | 📚 Library Clearance | 🏠 Hostel Clearance | 🗂️ Admission Document
-💵 7: Pay pending fees if any.
-🏅 8: Collect TC after 7–10 days.
-
-⚠️ Note: Submit reason for discontinuation.
-📞 Contact: Admin Office — Evening Office
-🕐 Mon–Fri, 9:00 AM – 4:30 PM',
-N'7-10 working days', NULL, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
-
-(14, 4, N'Tamil', N'tc_discontinued',
-N'படிப்பை நிறுத்தினால் tc, discontinued tc, dropout tc, transfer certificate',
-N'🎓 Transfer Certificate — SDNB Vaishnav College (நிறுத்திய மாணவர்கள்)
-⏱️ 7–10 வேலை நாட்கள்
-
-📝 படி 1: நிறுத்தும் கடிதத்துடன் HOD-ஐ தொடர்புகொள்ளுங்கள்.
-📋 படி 2: துறை அலுவலகத்திலிருந்து TC விண்ணப்பப் படிவம் சேகரிக்கவும்.
-✍️ படி 3: Class Incharge மற்றும் HOD இலிருந்து அனுமதி பெறுங்கள்.
-📚 படி 4: நூலகத்திலிருந்து சரியாக்கல் (புத்தகங்களை திருப்பி).
-🏠 படி 5: விடுதி வாசியாக இருந்தால் விடுதி சரியாக்கல்.
-🏛️ படி 6: Admin Office-ற்கு ஆவணங்களுடன் செல்லுங்கள்.
-💵 படி 7: நிலுவைக் கட்டணம் இருந்தால் செலுத்துங்கள்.
-🏅 படி 8: 7–10 நாட்களுக்குப் பிறகு TC சேகரிக்கவும்.
-
+🗂️ தேவையானவை: Valid ID Card | நிரப்பிய படிவம் | துறை & Union முத்திரைகள்
 📞 தொடர்பு: Admin Office
 🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
-N'7-10 working days', NULL, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
+N'2-3 working days', NULL, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
 
-(15, 4, N'English', N'bonafide_general',
-N'general bonafide certificate, general bonafide, student bonafide',
-N'📄 General Bonafide Certificate 
-🆓 Fee: FREE | ⏱️ Processing: 2–3 Working Days
+(31, 4, N'Tamil', N'course_bonafide',
+N'course bonafide, course bonafide certificate, course bonafide form, course enrollment certificate, semester bonafide, bonafide for admission, course proof certificate, course bonafide விண்ணப்பம்',
+N'📄 Course Bonafide Certificate — SDNB Vaishnav College
+🆓 கட்டணம்: இலவசம் | ⏱️ 3–4 வேலை நாட்கள்
 
-🎯 Purpose: Proof of student status — required for scholarships, educational loans, visa applications.
+🎯 நோக்கம்: தற்போதைய செமிஸ்டர் சேர்க்கை சரிபார்ப்பு — lateral entry அல்லது மாற்று சேர்க்கைக்கு.
 
-📝1: Visit Admin Office (Main Building (IT BLOCK), Ground Floor).
-📋 2: Collect General Bonafide Request Form.
-✍️ 3: Fill with registration number, name, department, year.
-🏫  4: Visit Department for Class Incharge signature and seal.
-🤝 5: Visit College Union for signature.
-🏛️ 6: Return to Admin Office with completed form.
-✅  7: Collect after 2–3 days.
+📝 படி 1: Admin Office-ற்குச் செல்லுங்கள் (முதன்மை கட்டடம் (IT Block), தாழ்வாரம்).
+📋 படி 2: Course Bonafide கோரிக்கை படிவம் நிரப்புங்கள்.
+✍️ படி 3: செமிஸ்டர் விவரங்கள், பதிவு எண், பாட குறியீடு மற்றும் பெயர் வழங்குங்கள்.
+🔍 படி 4: Admin ஊழியர்கள் சேர்க்கையை சரிபார்ப்பர்.
+✅ படி 5: 3–4 நாட்களுக்குப் பிறகு சான்றிதழ் சேகரிக்கவும்.
 
-🗂️ Required: Valid ID Card | Filled Form | Department & Union seals
-📞 Contact: Admin Office
-🕐 Mon–Fri, 9:00 AM – 4:30 PM',
-N'2-3 working days', NULL, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
+🗂️ தேவையானவை: Valid ID Card | நிரப்பிய கோரிக்கை படிவம்
+📞 தொடர்பு: Admin Office
+🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
+N'3-4 working days', NULL, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
 
-(16, 4, N'English', N'course_bonafide',
-N'course bonafide',
-N'📄 Course Bonafide Certificate
-🆓 Fee: FREE | ⏱️ Processing: 3–4 Working Days
+(32, 4, N'Tamil', N'passport_bonafide',
+N'passport bonafide, passport bonafide certificate, passport bonafide form, bonafide for passport, passport application bonafide, passport letter college, passport college certificate, passport சான்றிதழ்',
+N'🛂 Passport Bonafide Certificate — SDNB Vaishnav College
+💰 கட்டணம்: Rs.50 | ⏱️ 2–3 வேலை நாட்கள்
 
-🎯 Purpose: Verification of current course enrollment — required for semester admissions.
+🎯 நோக்கம்: Passport விண்ணப்பத்திற்கு கட்டாயம் — Ministry of External Affairs ஏற்றுக்கொள்ளும்.
 
-📝1: Visit Admin Office (Main Building(IT BLOCK), Ground Floor).
-📋2: Fill Course Bonafide Request Form.
-✍️3: Provide semester details, registration number, course code and name.
-🔍 4: Admin staff verify enrollment in system.
-✅ 5: Collect after 3–4 days.
+📝 படி 1: Admin Office-ற்குச் செல்லுங்கள் (முதன்மை கட்டடம் (IT Block), தாழ்வாரம்).
+📋 படி 2: Passport Bonafide கோரிக்கை படிவம் பெறுங்கள்.
+✍️ படி 3: முழுப் பெயர், பிறந்த தேதி, பதிவு எண், தற்போதைய செமிஸ்டர் நிரப்புங்கள்.
+📎 படி 4: ID நகல் மற்றும் Admission Document நகல் இணையுங்கள்.
+💵 படி 5: Admin Office-ல் Rs.50 செலுத்துங்கள்.
+📤 படி 6: Certificates Desk-ல் சமர்ப்பிக்கவும்.
+✅ படி 7: 2–3 நாட்களுக்குப் பிறகு சேகரிக்கவும்.
 
-🗂️ Required: Valid ID Card | Filled Request Form
-📞 Contact: Admin Office — Evening Office
-🕐 Mon–Fri, 9:00 AM – 4:30 PM',
-N'3-4 working days', NULL, N'Admin Office, Main Building(IT BLOCK), Ground Floor'),
-
-(17, 4, N'English', N'passport_bonafide',
-N'passport bonafide',
-N'🛂 Passport Bonafide Certificate 
-💰 Fee: Rs.50 | ⏱️ Processing: 2–3 Working Days
-
-🎯 Purpose: Mandatory for passport applications — accepted by Ministry of External Affairs.
-
-📝1: Visit Admin Office (Main Building(IT BLOCK), Ground Floor).
-📋 2: Collect Passport Bonafide Request Form.
-✍️ 3: Fill with full name, date of birth, registration number, current semester.
-📎4: Attach ID copy and Admission Document copy.
-💵 5: Pay Rs.50 at Admin Office.
-📤6: Submit to Certificates Desk.
-✅ 7: Collect after 2–3 days.
-
-⚠️ Important: Name must match government ID. Certificate validity: 1 year.
-📞 Contact: Admin Office — Evening Block 
-🕐 Mon–Fri, 9:00 AM – 4:30 PM',
+⚠️ முக்கியம்: பெயர் அரசு ID உடன் பொருந்த வேண்டும். சான்றிதழ் செல்லுபடி: 1 ஆண்டு.
+📞 தொடர்பு: Admin Office
+🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
 N'2-3 working days', 50.00, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
 
-(18, 4, N'English', N'bonafide_without_fee',
-N'bonafide without fee, bonafide without fee payment, no fee bonafide',
-N'📄 Bonafide Without Fee Payment 
-🆓 Fee: FREE (Special Permission Only) | ⏱️ Processing: 3–5 Working Days
+(33, 4, N'Tamil', N'bonafide_without_fee',
+N'bonafide without fee, no fee bonafide, fee இல்லாமல் bonafide, free bonafide special, bonafide waiver, financial hardship bonafide, bonafide fee waiver, bpl bonafide, நிதி சிரமம் bonafide, bonafide இலவசமாக',
+N'📄 கட்டணம் இல்லாத Bonafide (சிறப்பு அனுமதி) — SDNB Vaishnav College
+🆓 கட்டணம்: இலவசம் (சிறப்பு அனுமதி மட்டும்) | ⏱️ 3–5 வேலை நாட்கள்
 
-✅ Eligibility: Proven financial hardship | Orphaned | Single parent family | Scholarship recipient | Exceptional cases
+✅ தகுதி: நிரூபிக்கப்பட்ட நிதி சிரமம் | அனாதை | ஒற்றைப் பெற்றோர் குடும்பம் | உதவித்தொகை பெறுபவர்
 
-🗂️ Required Documents:
-   📝 Request letter explaining waiver reason
-   💼 Financial proof (BPL Certificate or income proof)
+🗂️ தேவையான ஆவணங்கள்:
+   📝 காரணம் விளக்கும் கோரிக்கை கடிதம்
+   💼 நிதி ஆதாரம் (BPL Certificate அல்லது வருமான சான்று)
    🪪 Valid ID Card | 🗂️ Admission Document
 
-🔄 Process Flow:
-   📤 Submit at Admin Office
-   👩‍🏫 Class Incharge verification
-   🧑‍💼 HOD approval
+🔄 செயல் வழிமுறை:
+   📤 Admin Office-ல் சமர்ப்பி
+   👩‍🏫 Class Incharge சரிபார்ப்பு
+   🧑‍💼 HOD அனுமதி
    🎓 Dean of Student Affairs
-   🏅 Final approval from Principal
+   🏅 Principal இறுதி அனுமதி
 
-⏱️ Verification: 2–3 days | Approval: 1–2 days | Issue: 1 day
-⚠️ Important: Approval is NOT automatic. Decided case-by-case.
-📞 Contact: Admin Office - Evening Block 
-🕐 Mon–Fri, 9:00 AM – 4:30 PM',
+⏱️ சரிபார்ப்பு: 2–3 நாட்கள் | அனுமதி: 1–2 நாட்கள் | வெளியீடு: 1 நாள்
+⚠️ முக்கியம்: அனுமதி தானாக கிடைக்காது. தனி தனி வழக்கு அடிப்படையில் முடிவெடுக்கப்படும்.
+📞 தொடர்பு: Admin Office
+🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
 N'3-5 working days', NULL, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
 
-(21, 4, N'English', N'marksheet_lost',
-N'marksheet lost, lost marksheet, my marksheet is lost, certificate lost, duplicate marksheet',
- N'📄 Duplicate Marksheet/Certificate 
-⏱️ Processing: 10–15 Working Days
+-- ─────────────────────────────────────────────────────────────
+-- 2B ▸ FEE PAYMENT
+-- ─────────────────────────────────────────────────────────────
 
-💰 Fee Structure (Based on Year Gap):
-   1 year = Rs.1,000 | 2 years = Rs.2,000 | 3 years = Rs.3,000
-   4 years = Rs.4,000 | 5 years = Rs.5,000 | After 5 years = 🏫 University Processing (4–6 weeks)
+(40, 2, N'English', N'fee_payment',
+N'fee payment, how to pay fees, semester fee, pay college fee, fee due date, fee deadline, fee online payment, fee offline payment, fee receipt, tuition fee, annual fee, pay tuition, college fees, fee structure, how much is the fee, fee details, fee installment, pay in installments, late fee, fee fine, overdue fee, fee challan, fee portal',
+N'💰 Fee Payment — SDNB Vaishnav College
 
-📝1: Visit Admin Office (Main Building (IT BLOCK), Ground Floor).
-📋 2: Collect Duplicate Certificate Request Form.
-✍️ 3: Fill with semester/exam year, subject codes, exam registration number.
-📎4: Provide ID copy, Admission Document copy, Police FIR (if lost/stolen).
-💵 5: Pay fee at Cash Counter (Rs.100 Processing fee + Duplication fee).
-📤6: Submit form with receipts.
-🔍7: Admin verifies with University records.
-✅ 8: Duplicate printed and issued.
+📋 Payment Modes:
+   🖥️ Online: College Fee Portal (refer college website)
+   🏦 Offline: Cash / DD at Finance Office (Admin Office)
 
-⚠️ Important: Official government certification. Not available if gap exceeds 5 years.
-📞 Contact: Admin Office — Evening Block 
+⚠️ Late Fee: Rs.500 per day after due date
+
+📦 Installment Option: Available — contact Finance Office for eligibility.
+
+🗂️ Steps:
+   📝 1: Log in to the student portal or visit Finance Office.
+   💵 2: Check your fee balance and select payment mode.
+   🧾 3: Make payment and collect/download receipt.
+   📂 4: Keep receipt safe — required for TC, bonafide, and clearance.
+
+📍 Finance Office: Admin Office, Main Building (IT BLOCK), Ground Floor
+🕐 Mon–Fri, 9:00 AM – 4:30 PM
+💡 Tip: Pay before the due date to avoid Rs.500/day fine!',
+NULL, NULL, N'Finance Office, Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+(41, 2, N'Tamil', N'fee_payment',
+N'fee payment, கட்டணம் எப்படி செலுத்துவது, semester fee, கல்லூரி கட்டணம், fee due date, fee deadline, online fee, offline fee, fee receipt, tuition fee, annual fee, fee structure, fee installment, late fee, fee fine, கட்டண விவரங்கள்',
+N'💰 கட்டண செலுத்துதல் — SDNB Vaishnav College
+
+📋 செலுத்தும் வழிகள்:
+   🖥️ Online: கல்லூரி Fee Portal (கல்லூரி இணையதளம் பார்க்கவும்)
+   🏦 Offline: Cash / DD — Finance Office (Admin Office)-ல்
+
+⚠️ தாமத அபராதம்: கடைசி தேதிக்குப் பிறகு நாளொன்றுக்கு Rs.500
+
+📦 தவணை வசதி: தகுதிக்கு Finance Office-ஐ தொடர்புகொள்ளுங்கள்.
+
+🗂️ படிகள்:
+   📝 படி 1: Student Portal-ல் login செய்யுங்கள் அல்லது Finance Office செல்லுங்கள்.
+   💵 படி 2: கட்டண நிலுவை சரிபார்த்து, செலுத்தும் முறை தேர்வு செய்யுங்கள்.
+   🧾 படி 3: கட்டணம் செலுத்தி ரசீது பெறுங்கள்.
+   📂 படி 4: ரசீதை பாதுகாப்பாக வைத்திருங்கள் — TC, bonafide, clearance-க்கு தேவை.
+
+📍 Finance Office: Admin Office, முதன்மை கட்டடம் (IT Block), தாழ்வாரம்
+🕐 திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
+NULL, NULL, N'Finance Office, Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+-- ─────────────────────────────────────────────────────────────
+-- 2C ▸ CONDONATION FEE PAYMENT
+-- ─────────────────────────────────────────────────────────────
+
+(42, 6, N'English', N'condonation',
+N'condonation, condonation fee, pay condonation, attendance condonation, condonation payment, condonation procedure, how to pay condonation, condonation for exam, 65 to 74 attendance, 65 percent attendance exam, 70 percent attendance exam, short attendance exam fee, low attendance fee',
+N'💵 Condonation Fee Payment — SDNB Vaishnav College
+💰 Fee: Rs.250 | ⏱️ Pay at least 3 days before exam
+
+✅ Eligible Range: 65%–74% attendance (Category B)
+
+📝 1: Confirm your attendance % with your department.
+💵 2: Visit Admin Office — Cash Counter.
+🧾 3: Pay Rs.250 and collect receipt.
+📋 4: Submit receipt copy to department before exam.
+✅ 5: You are now eligible to write the exam.
+
+⚠️ Important:
+   — Payment must be made AT LEAST 3 working days before exam.
+   — No refund once paid.
+   — Below 65%? Condonation is NOT applicable. Contact HOD.
+
+📍 Cash Counter: Admin Office, Main Building (IT BLOCK), Ground Floor
 🕐 Mon–Fri, 9:00 AM – 4:30 PM',
-N'10-15 working days', NULL, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
+N'Pay 3 days before exam', 250.00, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
 
-(22, 4, N'Tamil', N'marksheet_lost',
-N'மார்க்ஷீட் தொலைந்தது, marksheet lost, certificate lost, duplicate marksheet',
-N'📄 Duplicate மார்க்ஷீட்/சான்றிதழ் — SDNB Vaishnav College
-⏱️ 10–15 வேலை நாட்கள்
+(43, 6, N'Tamil', N'condonation',
+N'condonation, condonation fee, attendance condonation, condonation செலுத்துவது எப்படி, condonation payment, 65 to 74 attendance, குறைந்த attendance exam, attendance fee, low attendance fee, condonation procedure',
+N'💵 Condonation Fee செலுத்துதல் — SDNB Vaishnav College
+💰 கட்டணம்: Rs.250 | ⏱️ தேர்வுக்கு குறைந்தது 3 நாட்கள் முன் செலுத்தவும்
 
-💰 கட்டணம் (ஆண்டு இடைவெளிக்கு):
-   1 ஆண்டு = Rs.1,000 | 2 = Rs.2,000 | 3 = Rs.3,000
-   4 = Rs.4,000 | 5 = Rs.5,000 | 5+ = 🏫 பல்கலைக்கழகம் (4–6 வாரங்கள்)
+✅ தகுதி வரம்பு: 65%–74% attendance (Category B)
 
-📝 படி 1: Admin Office-ற்குச் செல்லுங்கள் (முதன்மை கட்டடம், தாழ்வாரம்).
-📋 படி 2: Duplicate சான்றிதழ் கோரிக்கைப் படிவம் சேகரிக்கவும்.
-✍️ படி 3: செமிஸ்டர்/தேர்வு ஆண்டு, பாடப் குறியீடுகள், தேர்வு பதிவு எண் நிரப்பவும்.
-📎 படி 4: ID நகல், சேர்க்கை நகல், போலீஸ் FIR (தேவையில்) வழங்குங்கள்.
-💵 படி 5: Cash Counter-ல் கட்டணம் செலுத்துங்கள் (Rs.100 செயல்படுத்தும் + duplicate fee).
-📤 படி 6: ரசீதுகளுடன் சமர்ப்பிக்கவும்.
-🔍 படி 7: Admin பல்கலைக்கழக பதிவுகளுடன் சரிபார்க்கும்.
-✅ படி 8: Duplicate அச்சிட வெளியீடு.
+📝 படி 1: உங்கள் attendance %-ஐ துறையில் உறுதி செய்யுங்கள்.
+💵 படி 2: Admin Office — Cash Counter-ற்குச் செல்லுங்கள்.
+🧾 படி 3: Rs.250 செலுத்தி ரசீது பெறுங்கள்.
+📋 படி 4: தேர்வுக்கு முன் ரசீது நகலை துறையில் சமர்ப்பிக்கவும்.
+✅ படி 5: இப்போது தேர்வு எழுதுவதற்கு தகுதி உள்ளீர்கள்.
 
-📞 தொடர்பு: Admin office
-🕐 நேரம்: திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
-N'10-15 working days', NULL, N'Admin Office, Main Building, Ground Floor');
+⚠️ முக்கியம்:
+   — தேர்வுக்கு குறைந்தது 3 வேலை நாட்கள் முன்பு செலுத்த வேண்டும்.
+   — செலுத்திய கட்டணம் திரும்ப கிடைக்காது.
+   — 65% கீழே? Condonation பொருந்தாது. HOD-ஐ தொடர்புகொள்ளுங்கள்.
+
+📍 Cash Counter: Admin Office, முதன்மை கட்டடம் (IT Block), தாழ்வாரம்
+🕐 திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
+N'Pay 3 days before exam', 250.00, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+-- ─────────────────────────────────────────────────────────────
+-- 2D ▸ SCHOLARSHIP
+-- ─────────────────────────────────────────────────────────────
+
+(44, 5, N'English', N'scholarship',
+N'scholarship, scholarship apply, how to get scholarship, scholarship procedure, scholarship form, government scholarship, state scholarship, merit scholarship, need based scholarship, scholarship eligibility, scholarship documents, scholarship deadline, scholarship status, scholarship renewal, bc scholarship, mbc scholarship, sc scholarship, st scholarship, first graduate scholarship, minority scholarship, embc scholarship, income scholarship',
+N'🏅 Scholarship Information — SDNB Vaishnav College
+
+📋 Common Scholarship Types:
+   🎓 BC/MBC/SC/ST Scholarship — Government (Tamil Nadu)
+   🌟 First Graduate Scholarship — For first-gen graduates
+   💛 Minority Scholarship — Eligible minority communities
+   📈 Merit Scholarship — Top academic performers
+   💰 Need-Based Scholarship — Income below threshold
+
+📝 General Process:
+   1️⃣ Visit Finance Office / Admin Office for the scholarship form.
+   2️⃣ Fill in personal, academic, and family income details.
+   3️⃣ Attach required documents (see below).
+   4️⃣ Submit before the announced deadline.
+   5️⃣ Track status via the scholarship portal or with Finance Office.
+
+🗂️ Typical Documents Required:
+   🪪 Student ID | 📋 Bonafide Certificate | 💰 Income Certificate
+   🏠 Community Certificate | 📊 Previous Year Marksheet | 🏦 Bank Passbook Copy
+
+⚠️ Deadlines vary each year — confirm with Finance Office.
+📍 Finance Office: Admin Office, Main Building (IT BLOCK), Ground Floor
+🕐 Mon–Fri, 9:00 AM – 4:30 PM',
+N'5-7 working days', NULL, N'Finance Office, Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+(45, 5, N'Tamil', N'scholarship',
+N'scholarship, உதவித்தொகை, scholarship apply, உதவித்தொகை விண்ணப்பம், scholarship procedure, government scholarship, bc scholarship, mbc scholarship, sc scholarship, st scholarship, merit scholarship, first graduate scholarship, minority scholarship, scholarship documents, scholarship deadline, scholarship eligibility, உதவித்தொகை தகுதி',
+N'🏅 உதவித்தொகை தகவல் — SDNB Vaishnav College
+
+📋 பொதுவான உதவித்தொகை வகைகள்:
+   🎓 BC/MBC/SC/ST உதவித்தொகை — Tamil Nadu அரசு
+   🌟 First Graduate Scholarship — முதல் தலைமுறை பட்டதாரி
+   💛 சிறுபான்மையினர் உதவித்தொகை
+   📈 Merit Scholarship — சிறந்த மாணவர்களுக்கு
+   💰 Need-Based Scholarship — வருமான வரம்பிற்கு கீழுள்ளவர்களுக்கு
+
+📝 பொதுவான நடைமுறை:
+   1️⃣ Finance Office / Admin Office-ல் உதவித்தொகை படிவம் பெறுங்கள்.
+   2️⃣ தனிப்பட்ட, கல்வி மற்றும் குடும்ப வருமான விவரங்கள் நிரப்புங்கள்.
+   3️⃣ தேவையான ஆவணங்கள் இணையுங்கள்.
+   4️⃣ அறிவிக்கப்பட்ட கடைசி தேதிக்கு முன் சமர்ப்பிக்கவும்.
+   5️⃣ Finance Office மூலம் நிலையை கண்காணியுங்கள்.
+
+🗂️ தேவையான ஆவணங்கள்:
+   🪪 Student ID | 📋 Bonafide Certificate | 💰 வருமான சான்று
+   🏠 Community Certificate | 📊 கடந்த ஆண்டு மார்க்ஷீட் | 🏦 வங்கி Passbook நகல்
+
+⚠️ கடைசி தேதி ஆண்டுதோறும் மாறும் — Finance Office-ல் உறுதி செய்யுங்கள்.
+📍 Finance Office: Admin Office, முதன்மை கட்டடம் (IT Block), தாழ்வாரம்
+🕐 திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
+N'5-7 working days', NULL, N'Finance Office, Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+-- ─────────────────────────────────────────────────────────────
+-- 2E ▸ HOSTEL
+-- ─────────────────────────────────────────────────────────────
+
+(46, 5, N'English', N'hostel',
+N'hostel, hostel admission, hostel apply, hostel fee, hostel facilities, hostel registration, hostel allotment, hostel room, hostel rules, hostel mess, hostel warden, hostel contact, stay in campus, campus accommodation, room allotment, hostel availability, hostel charges, hostel timing, hostel gate timing, hostel in out, hostel leave',
+N'🏠 Hostel Information — SDNB Vaishnav College
+
+🛏️ Hostel Fee: Rs.30,000/year (payable before hostel registration)
+
+📝 Admission Process:
+   1️⃣ Collect Hostel Application Form from Hostel Office.
+   2️⃣ Fill form with personal, guardian, and medical details.
+   3️⃣ Submit with ID copy, parent consent letter, and fee receipt.
+   4️⃣ Room allotment communicated after verification.
+
+📋 Key Rules:
+   🕐 Gate Timings: As per hostel notice board
+   📵 Mobile usage: As per hostel policy
+   🏠 Overnight stay outside: Prior written permission from warden required
+   🍽️ Mess: Included in hostel fee
+
+🗂️ Documents Required:
+   🪪 Valid ID | 📄 Admission Document | 👨‍👩‍👧 Parent Consent | 🏥 Medical Certificate
+
+📞 Contact: Hostel Office (Behind Main Gate)
+🕐 Mon–Fri, 9:00 AM – 4:30 PM
+⚠️ Limited seats — apply early!',
+NULL, 30000.00, N'Hostel Office, Behind Main Gate'),
+
+(47, 5, N'Tamil', N'hostel',
+N'hostel, hostel admission, hostel apply, hostel fee, hostel வசதிகள், hostel registration, hostel room, hostel rules, hostel mess, warden, campus accommodation, hostel தங்குவது, hostel charges, hostel timing, hostel gate timing, hostel leave, விடுதி',
+N'🏠 விடுதி தகவல் — SDNB Vaishnav College
+
+🛏️ விடுதி கட்டணம்: Rs.30,000/ஆண்டு (விடுதி பதிவுக்கு முன் செலுத்தவும்)
+
+📝 சேர்க்கை நடைமுறை:
+   1️⃣ Hostel Office-ல் விண்ணப்பப் படிவம் பெறுங்கள்.
+   2️⃣ தனிப்பட்ட, பாதுகாவலர் மற்றும் மருத்துவ விவரங்கள் நிரப்புங்கள்.
+   3️⃣ ID நகல், பெற்றோர் சம்மத கடிதம் மற்றும் கட்டண ரசீதுடன் சமர்ப்பிக்கவும்.
+   4️⃣ சரிபார்ப்புக்குப் பிறகு அறை ஒதுக்கீடு தெரிவிக்கப்படும்.
+
+📋 முக்கிய விதிகள்:
+   🕐 கேட் நேரம்: விடுதி அறிவிப்பு பலகை பார்க்கவும்
+   📵 Mobile பயன்பாடு: விடுதி கொள்கைப்படி
+   🍽️ Mess: விடுதி கட்டணத்தில் சேர்க்கப்பட்டது
+
+🗂️ தேவையான ஆவணங்கள்:
+   🪪 Valid ID | 📄 Admission Document | 👨‍👩‍👧 பெற்றோர் சம்மதம் | 🏥 மருத்துவ சான்று
+
+📞 தொடர்பு: Hostel Office (முதன்மை வாயில் பின்புறம்)
+🕐 திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM
+⚠️ இடங்கள் குறைவாக உள்ளன — முன்கூட்டியே விண்ணப்பிக்கவும்!',
+NULL, 30000.00, N'Hostel Office, Behind Main Gate'),
+
+-- ─────────────────────────────────────────────────────────────
+-- 2F ▸ LIBRARY
+-- ─────────────────────────────────────────────────────────────
+
+(48, 1, N'English', N'library',
+N'library, library timings, library hours, library books, borrow books, issue books, return books, library card, library membership, library fine, overdue fine, library clearance, library location, GB block library, renew books, book renewal, e-library, digital library, reference books, library rules, lost library book',
+N'📚 Library Information — SDNB Vaishnav College
+
+📍 Location: GB Block, Ground Floor
+
+🕐 Library Timings:
+   Mon–Fri: 8:30 AM – 5:00 PM
+   Saturday: 9:00 AM – 1:00 PM
+
+📖 Services:
+   📗 Book Borrowing: Up to 2 books at a time
+   🔄 Renewal: 1 renewal allowed per book
+   💻 E-Library / Digital Resources: Available (ask librarian)
+   📰 Newspaper & Journals: Available in reading room
+
+⚠️ Fines:
+   📅 Overdue Fine: Rs.1 per day per book after due date
+   📚 Lost Book: Replacement cost + Rs.50 penalty
+
+🗂️ For TC / Clearance:
+   Return ALL borrowed books before applying for TC or clearance.
+
+📞 Contact: Library — GB Block
+💡 Tip: Bring your student ID for book issue and return.',
+NULL, NULL, N'Library, GB Block, Ground Floor'),
+
+(49, 1, N'Tamil', N'library',
+N'library, நூலகம், library timings, library hours, library books, books borrow, books return, library card, library clearance, library fine, overdue fine, library location, GB block, book renewal, e-library, நூல் திரும்பி கொடுத்தல்',
+N'📚 நூலகம் — SDNB Vaishnav College
+
+📍 இடம்: GB Block, தாழ்வாரம்
+
+🕐 நூலக நேரம்:
+   திங்கட்கிழமை–வெள்ளிக்கிழமை: 8:30 AM – 5:00 PM
+   சனிக்கிழமை: 9:00 AM – 1:00 PM
+
+📖 சேவைகள்:
+   📗 புத்தக கடனாகத் தரல்: ஒரே நேரத்தில் 2 புத்தகங்கள்
+   🔄 Renewal: ஒரு புத்தகத்திற்கு 1 முறை
+   💻 E-Library / Digital Resources: கிடைக்கும்
+   📰 செய்தித்தாள் & Journals: வாசிப்பு அறையில் கிடைக்கும்
+
+⚠️ அபராதம்:
+   📅 கடைசி தேதிக்கு பிறகு: Rs.1/நாள்/புத்தகம்
+   📚 தொலைந்த புத்தகம்: மாற்று செலவு + Rs.50 அபராதம்
+
+🗂️ TC / Clearance-க்கு:
+   TC அல்லது clearance விண்ணப்பிக்கும் முன் அனைத்து புத்தகங்களையும் திரும்பி அளியுங்கள்.
+
+📞 தொடர்பு: நூலகம் — GB Block',
+NULL, NULL, N'Library, GB Block, Ground Floor'),
+
+-- ─────────────────────────────────────────────────────────────
+-- 2G ▸ CANTEEN
+-- ─────────────────────────────────────────────────────────────
+
+(50, 1, N'English', N'canteen',
+N'canteen, college canteen, food, meals, subsidized food, cheap food, canteen timings, canteen location, canteen token, meal token, canteen price, food price, breakfast canteen, lunch canteen, canteen menu, canteen hours, subsidized meal, Rs.10 meal, mess',
+N'🍽️ College Canteen — SDNB Vaishnav College
+
+📍 Location: Opposite to GB Block
+
+💰 Subsidized Meal: Rs.10/meal (Token-based)
+
+🎫 Token Collection:
+   — Collect token from Admin Office (IT Block)
+   — Present token at canteen counter
+
+
+📋 Note: Only students with valid student ID can avail subsidized meals.
+💡 Tip: Carry your ID card for token collection at Admin Office.',
+NULL, 10.00, N'Canteen, Opposite to GB Block'),
+
+(51, 1, N'Tamil', N'canteen',
+N'canteen, கேன்டீன், college canteen, உணவு, meals, subsidized food, cheap food, canteen timings, canteen location, canteen token, meal token, canteen price, food price, canteen menu, Rs.10 meal, மதிய உணவு',
+N'🍽️ கல்லூரி கேன்டீன் — SDNB Vaishnav College
+
+📍 இடம்: GB Block எதிரில்
+
+💰 மானிய உணவு: Rs.10/வேளை (Token முறை)
+
+🎫 Token பெறுதல்:
+   — Admin Office (IT Block)-ல் Token பெறுங்கள்
+   — கேன்டீன் counter-ல் Token காட்டுங்கள்
+
+🕐 கேன்டீன் நேரம்:
+   காலை உணவு: 8:00 AM – 9:00 AM
+   மதிய உணவு: 12:00 PM – 2:00 PM
+   சிற்றுண்டி: 3:00 PM – 4:00 PM
+   (நேரம் மாறலாம் — கேன்டீன் அறிவிப்பு பலகை பார்க்கவும்)
+
+📋 குறிப்பு: Valid student ID உள்ள மாணவர்களுக்கு மட்டுமே மானிய உணவு.
+💡 Token பெற Admin Office-ல் ID card கொண்டு செல்லுங்கள்.',
+NULL, 10.00, N'Canteen, Opposite to GB Block'),
+
+-- ─────────────────────────────────────────────────────────────
+-- 2H ▸ COMPLAINT REGISTRATION
+-- ─────────────────────────────────────────────────────────────
+
+(52, 1, N'English', N'complaint',
+N'complaint, complaint registration, how to complain, file complaint, raise complaint, submit complaint, issue report, problem report, grievance, grievance cell, report problem, anti ragging, anti ragging complaint, ragging complaint, harassment complaint, missing item, lost found, report lost item, report issue, complaint procedure',
+N'📢 Complaint Registration — SDNB Vaishnav College
+
+🗂️ Types of Complaints Handled:
+   🚨 Anti-Ragging Complaint
+   😔 Harassment or Bullying
+   📦 Lost / Missing Item
+   🏫 Campus Facility Issue
+   📋 Academic / Administrative Grievance
+
+📝 How to Register:
+   1️⃣ Write a detailed complaint letter.
+   2️⃣ Visit Union Office or Admin Office.
+   3️⃣ Submit complaint letter at the counter.
+   4️⃣ Collect acknowledgment slip.
+   ✅ Action taken within 7 working days.
+
+📞 Anti-Ragging Helpline: Contact Admin Office / Principal Office
+🏛️ Grievance Cell: Dean of Student Affairs Office
+📍 Admin Office: Main Building (IT BLOCK), Ground Floor
+🕐 Mon–Fri, 9:00 AM – 4:30 PM
+⚠️ All complaints are confidential and handled with care.',
+NULL, NULL, N'Union Office / Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+(53, 1, N'Tamil', N'complaint',
+N'complaint, புகார், புகார் பதிவு, how to complain, file complaint, raise complaint, grievance, grievance cell, ragging complaint, harassment complaint, missing item complaint, lost item, issue report, problem report, anti ragging, harassment, bullying',
+N'📢 புகார் பதிவு — SDNB Vaishnav College
+
+🗂️ கையாளப்படும் புகார் வகைகள்:
+   🚨 Anti-Ragging புகார்
+   😔 Harassment அல்லது Bullying
+   📦 தொலைந்த / காணாமல் போன பொருள்
+   🏫 Campus வசதி பிரச்சினை
+   📋 கல்வி / நிர்வாக குறைகள்
+
+📝 பதிவு செய்வது எப்படி:
+   1️⃣ விரிவான புகார் கடிதம் எழுதுங்கள்.
+   2️⃣ Union Office அல்லது Admin Office-ற்குச் செல்லுங்கள்.
+   3️⃣ Counter-ல் புகார் கடிதம் சமர்ப்பிக்கவும்.
+   4️⃣ Acknowledgment slip பெறுங்கள்.
+   ✅ 7 வேலை நாட்களுக்குள் நடவடிக்கை எடுக்கப்படும்.
+
+📞 Anti-Ragging: Admin Office / Principal Office தொடர்புகொள்ளுங்கள்
+🏛️ Grievance Cell: Dean of Student Affairs Office
+📍 Admin Office: முதன்மை கட்டடம் (IT Block), தாழ்வாரம்
+🕐 திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM
+⚠️ அனைத்து புகார்களும் ரகசியமாக கையாளப்படும்.',
+NULL, NULL, N'Union Office / Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+-- ─────────────────────────────────────────────────────────────
+-- 2I ▸ MEDIUM OF INSTRUCTION (MOI) CERTIFICATE
+-- ─────────────────────────────────────────────────────────────
+
+(54, 4, N'English', N'moi_certificate',
+N'moi, moi certificate, medium of instruction, medium of instruction certificate, english medium certificate, language of instruction, moi for job, moi for higher studies, moi procedure, how to get moi, moi application, moi form, language certificate college',
+N'📜 Medium of Instruction (MOI) Certificate — SDNB Vaishnav College
+💰 Fee: Rs.1,000 | ⏱️ Processing: 3–4 Working Days
+
+🎯 Purpose: Certifies the language of instruction (English/Tamil) — required for jobs, higher education abroad, and government applications.
+
+📝 1: Visit Admin Office (Main Building (IT BLOCK), Ground Floor).
+📋 2: Collect MOI Request Form.
+✍️ 3: Fill with registration number, degree, year of passing, and purpose.
+💵 4: Pay Rs.1,000 at Admin Office counter.
+🧾 5: Attach payment receipt and ID copy.
+📤 6: Submit to Certificates Desk.
+✅ 7: Collect MOI Certificate after 3–4 working days.
+
+🗂️ Required: Valid Student ID | Admission Document | Payment Receipt
+📞 Contact: Admin Office — Evening Block
+🕐 Mon–Fri, 9:00 AM – 4:30 PM',
+N'3-4 working days', 1000.00, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+(55, 4, N'Tamil', N'moi_certificate',
+N'moi, moi certificate, medium of instruction, மொழிவழிக் கல்வி சான்றிதழ், english medium certificate, moi for job, moi for higher studies, moi procedure, moi application, moi form, language certificate, மொழி சான்றிதழ்',
+N'📜 Medium of Instruction (MOI) Certificate — SDNB Vaishnav College
+💰 கட்டணம்: Rs.1,000 | ⏱️ 3–4 வேலை நாட்கள்
+
+🎯 நோக்கம்: வேலை, வெளிநாடு உயர்கல்வி மற்றும் அரசு விண்ணப்பங்களுக்கு கல்வி கற்பிக்கப்பட்ட மொழி சான்றுபடுத்துகிறது.
+
+📝 படி 1: Admin Office-ற்குச் செல்லுங்கள் (முதன்மை கட்டடம் (IT Block), தாழ்வாரம்).
+📋 படி 2: MOI கோரிக்கை படிவம் பெறுங்கள்.
+✍️ படி 3: பதிவு எண், பட்டம், தேர்ச்சி ஆண்டு, நோக்கம் நிரப்புங்கள்.
+💵 படி 4: Admin Office counter-ல் Rs.1,000 செலுத்துங்கள்.
+🧾 படி 5: ரசீது மற்றும் ID நகல் இணையுங்கள்.
+📤 படி 6: Certificates Desk-ல் சமர்ப்பிக்கவும்.
+✅ படி 7: 3–4 வேலை நாட்களுக்குப் பிறகு MOI Certificate சேகரிக்கவும்.
+
+📞 தொடர்பு: Admin Office
+🕐 திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
+N'3-4 working days', 1000.00, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+-- ─────────────────────────────────────────────────────────────
+-- 2J ▸ GENUINENESS CERTIFICATE
+-- ─────────────────────────────────────────────────────────────
+
+(56, 4, N'English', N'genuineness_certificate',
+N'genuineness certificate, certificate verification, original certificate verification, verify certificate, genuine certificate, authenticity certificate, how to verify certificate, certificate genuine check, employer verification, document verification, verify degree, degree authenticity',
+N'🔍 Genuineness Certificate — SDNB Vaishnav College
+💰 Fee: Rs.500 | ⏱️ Processing: 5–7 Working Days
+
+🎯 Purpose: Official college verification that a certificate or degree was genuinely issued — required by employers and universities.
+
+📝 1: Visit Admin Office (Main Building (IT BLOCK), Ground Floor).
+📋 2: Collect Genuineness Certificate Request Form.
+✍️ 3: Fill with certificate details (degree, year, register number).
+📎 4: Attach photocopy of the certificate to be verified.
+💵 5: Pay Rs.500 at Admin Office counter.
+🧾 6: Attach payment receipt to form.
+📤 7: Submit at Certificates Desk.
+🔍 8: Admin cross-verifies with college records.
+✅ 9: Collect after 5–7 working days.
+
+🗂️ Required: Certificate copy | Valid ID | Payment Receipt
+📞 Contact: Admin Office
+🕐 Mon–Fri, 9:00 AM – 4:30 PM',
+N'5-7 working days', 500.00, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+(57, 4, N'Tamil', N'genuineness_certificate',
+N'genuineness certificate, certificate verification, original certificate verify, verify certificate, genuine certificate, authenticity certificate, certificate genuine check, employer verification, document verification, சான்றிதழ் சரிபார்ப்பு, சான்றிதழ் உண்மையானதா',
+N'🔍 Genuineness Certificate — SDNB Vaishnav College
+💰 கட்டணம்: Rs.500 | ⏱️ 5–7 வேலை நாட்கள்
+
+🎯 நோக்கம்: ஒரு சான்றிதழ் அல்லது பட்டம் உண்மையாக வழங்கப்பட்டது என்று கல்லூரி உத்தியோகபூர்வமாக சரிபார்க்கும் — employers மற்றும் universities தேவைப்படுவர்.
+
+📝 படி 1: Admin Office-ற்குச் செல்லுங்கள் (முதன்மை கட்டடம் (IT Block), தாழ்வாரம்).
+📋 படி 2: Genuineness Certificate கோரிக்கை படிவம் பெறுங்கள்.
+✍️ படி 3: சான்றிதழ் விவரங்கள் (பட்டம், ஆண்டு, பதிவு எண்) நிரப்புங்கள்.
+📎 படி 4: சரிபார்க்க வேண்டிய சான்றிதழின் நகலை இணையுங்கள்.
+💵 படி 5: Admin Office counter-ல் Rs.500 செலுத்துங்கள்.
+📤 படி 6: Certificates Desk-ல் சமர்ப்பிக்கவும்.
+🔍 படி 7: Admin கல்லூரி பதிவுகளுடன் சரிபார்க்கும்.
+✅ படி 8: 5–7 வேலை நாட்களுக்குப் பிறகு சேகரிக்கவும்.
+
+📞 தொடர்பு: Admin Office
+🕐 திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
+N'5-7 working days', 500.00, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+-- ─────────────────────────────────────────────────────────────
+-- 2K ▸ COLLEGE / OFFICE TIMINGS
+-- ─────────────────────────────────────────────────────────────
+
+(58, 1, N'English', N'college_timings',
+N'college timings, office timings, office hours, admin office hours, college hours, working hours, when is college open, when does college start, when does college end, college schedule, admin timings, what time, opening time, closing time, college time, gate timing, college entry time',
+N'⏰ College & Office Timings — SDNB Vaishnav College
+
+🏫 College Hours:
+   📅 Monday–Friday: 8:45 AM – 4:30 PM
+   📅 Saturday: 8:45 AM – 1:00 PM
+   ❌ Sunday: Closed
+
+🏛️ Admin Office:
+   🕐 Mon–Fri: 9:00 AM – 4:30 PM
+
+📚 Library (GB Block):
+   🕐 Mon–Fri: 8:30 AM – 5:00 PM
+   🕐 Saturday: 9:00 AM – 1:00 PM
+
+🍽️ Canteen:
+   🕐 Break timing: As per your respective timing. 
+ Hostel Office: As per hostel notice board
+ 
+⚠️a Timings may change on holidays and exam days — check college notice board.',
+NULL, NULL, NULL),
+
+(59, 1, N'Tamil', N'college_timings',
+N'college timings, office timings, office hours, admin office hours, college hours, கல்லூரி நேரம், அலுவலக நேரம், கல்லூரி திறக்கும் நேரம், கல்லூரி மூடும் நேரம், working hours, opening time, closing time, gate timing',
+N'⏰ கல்லூரி & அலுவலக நேரம் — SDNB Vaishnav College
+
+🏫 கல்லூரி நேரம்:
+   📅 திங்கட்கிழமை–வெள்ளிக்கிழமை: 8:45 AM – 4:30 PM
+   📅 சனிக்கிழமை: 8:45 AM – 1:00 PM
+   ❌ ஞாயிற்றுக்கிழமை: மூடல்
+
+🏛️ Admin Office:
+   🕐 திங்கட்கிழமை–வெள்ளிக்கிழமை: 9:00 AM – 4:30 PM
+
+📚 நூலகம் (GB Block):
+   🕐 திங்கட்கிழமை–வெள்ளிக்கிழமை: 8:30 AM – 5:00 PM
+   🕐 சனிக்கிழமை: 9:00 AM – 1:00 PM
+
+🍽️ கேன்டீன்:
+   🕐 இடைவேளை நேரம்: உங்கள் அவரவர் நேரப்படி.
+
+⚠️ விடுமுறை நாட்கள் மற்றும் தேர்வு நாட்களில் நேரம் மாறலாம்.',
+NULL, NULL, NULL),
+
+-- ─────────────────────────────────────────────────────────────
+-- 2L ▸ FIRST GRADUATION CERTIFICATE
+-- ─────────────────────────────────────────────────────────────
+
+(60, 4, N'English', N'first_graduation_certificate',
+N'first graduation certificate, first graduate certificate, first in family graduate, first generation graduate certificate, first graduate in family, first graduation proof, first gen certificate, first graduate scholarship proof',
+N'🥇 First Graduate Certificate — SDNB Vaishnav College
+🆓 Fee: FREE | ⏱️ Processing: 3–4 Working Days
+
+🎯 Purpose: Proof that you are the first graduate in your family — required for certain scholarships and government schemes.
+
+📝 1: Visit Admin Office (Main Building (IT BLOCK), Ground Floor).
+📋 2: Collect First Graduate Declaration Form.
+✍️ 3: Fill and sign the declaration confirming first-graduate status.
+📎 4: If supporting document is unavailable, an alternative declaration/affidavit is accepted.
+🏫 5: Get Class Incharge and HOD signature.
+🏛️ 6: Submit at Admin Office Certificates Desk.
+✅ 7: Collect after 3–4 working days.
+
+🗂️ Required: Valid ID | Admission Document | Signed Declaration
+📞 Contact: Admin Office
+🕐 Mon–Fri, 9:00 AM – 4:30 PM',
+N'3-4 working days', NULL, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+(61, 4, N'Tamil', N'first_graduation_certificate',
+N'first graduation certificate, first graduate certificate, first in family graduate, first generation graduate, first graduate in family, first graduation proof, first gen certificate, முதல் பட்டதாரி சான்றிதழ், குடும்பத்தில் முதல் பட்டதாரி',
+N'🥇 முதல் பட்டதாரி சான்றிதழ் — SDNB Vaishnav College
+🆓 கட்டணம்: இலவசம் | ⏱️ 3–4 வேலை நாட்கள்
+
+🎯 நோக்கம்: உங்கள் குடும்பத்தில் நீங்கள் முதல் பட்டதாரி என்று நிரூபிக்க — சில உதவித்தொகைகள் மற்றும் அரசு திட்டங்களுக்கு தேவை.
+
+📝 படி 1: Admin Office-ற்குச் செல்லுங்கள் (முதன்மை கட்டடம் (IT Block), தாழ்வாரம்).
+📋 படி 2: First Graduate Declaration Form பெறுங்கள்.
+✍️ படி 3: படிவத்தில் கையொப்பமிட்டு முதல் பட்டதாரி நிலை உறுதிப்படுத்துங்கள்.
+📎 படி 4: ஆவணம் கிடைக்கவில்லை என்றால் மாற்று declaration/affidavit ஏற்றுக்கொள்ளப்படும்.
+🏫 படி 5: Class Incharge மற்றும் HOD கையொப்பம் பெறுங்கள்.
+🏛️ படி 6: Admin Office Certificates Desk-ல் சமர்ப்பிக்கவும்.
+✅ படி 7: 3–4 வேலை நாட்களுக்குப் பிறகு சேகரிக்கவும்.
+
+📞 தொடர்பு: Admin Office
+🕐 திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
+N'3-4 working days', NULL, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+-- ─────────────────────────────────────────────────────────────
+-- 2M ▸ DISABILITY STUDENT SUPPORT
+-- ─────────────────────────────────────────────────────────────
+
+(62, 1, N'English', N'disability_support',
+N'disability, disabled student, physically challenged, handicapped, disability support, disability exemption, disability attendance, disability fee exemption, physically challenged support, accessibility, wheelchair, disability certificate, specially abled, differently abled, disability services',
+N'♿ Disability / Specially Abled Student Support — SDNB Vaishnav College
+🆓 Fee: FREE | ⏱️ 5–7 Working Days
+
+🎯 Supports Available:
+   📋 Attendance relaxation (with COE approval)
+   💰 Fee exemption (case-by-case)
+   🏫 Special seating arrangement in exams
+   ♿ Accessibility support on campus
+
+📝 1: Approach Admin Office or Dean of Student Affairs.
+📋 2: Collect Disability Support Request Form.
+✍️ 3: Fill form with nature of disability and support required.
+📎 4: Attach Medical Certificate from a registered doctor.
+🏫 5: Get HOD approval letter.
+🏛️ 6: Submit to Admin Office / COE (Controller of Examinations).
+✅ 7: Support granted within 5–7 working days.
+
+🗂️ Required: Medical Certificate | Disability Certificate | HOD Letter | Valid ID
+📞 Contact: Admin Office / Dean of Student Affairs
+🕐 Mon–Fri, 9:00 AM – 4:30 PM',
+N'5-7 working days', NULL, N'Admin Office / Dean of Student Affairs Office'),
+
+(63, 1, N'Tamil', N'disability_support',
+N'disability, disabled student, physically challenged, handicapped, disability support, disability attendance, disability fee exemption, accessibility, wheelchair, specially abled, differently abled, உடல் ஊனம், உடல் சவால், சிறப்பு தேவை மாணவர்',
+N'♿ உடல் ஊனமுற்ற / சிறப்பு தேவை மாணவர் ஆதரவு — SDNB Vaishnav College
+🆓 கட்டணம்: இலவசம் | ⏱️ 5–7 வேலை நாட்கள்
+
+🎯 கிடைக்கும் ஆதரவுகள்:
+   📋 Attendance தளர்வு (COE அனுமதியுடன்)
+   💰 கட்டண விலக்கு (தனிப்பட்ட வழக்கு அடிப்படையில்)
+   🏫 தேர்வில் சிறப்பு இருக்கை ஏற்பாடு
+   ♿ Campus-ல் அணுகல் ஆதரவு
+
+📝 படி 1: Admin Office அல்லது Dean of Student Affairs அணுகுங்கள்.
+📋 படி 2: Disability Support கோரிக்கை படிவம் பெறுங்கள்.
+✍️ படி 3: ஊனத்தின் தன்மை மற்றும் தேவையான ஆதரவை நிரப்புங்கள்.
+📎 படி 4: பதிவு பெற்ற மருத்துவரிடம் Medical Certificate இணையுங்கள்.
+🏫 படி 5: HOD அனுமதி கடிதம் பெறுங்கள்.
+🏛️ படி 6: Admin Office / COE-ல் சமர்ப்பிக்கவும்.
+✅ படி 7: 5–7 வேலை நாட்களுக்குள் ஆதரவு வழங்கப்படும்.
+
+📞 தொடர்பு: Admin Office / Dean of Student Affairs
+🕐 திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
+N'5-7 working days', NULL, N'Admin Office / Dean of Student Affairs Office'),
+
+-- ─────────────────────────────────────────────────────────────
+-- 2N ▸ RESULT ENQUIRY / EXAM RESULTS
+-- ─────────────────────────────────────────────────────────────
+
+(64, 6, N'English', N'result_enquiry',
+N'result, exam result, check result, where to check result, university result, semester result, marks, grade, cgpa, gpa, result portal, result website, how to check result, result announcement, result date, when will result come, result out, final result, arrear result, backlog result, supplementary result, revaluation, revaluation apply',
+N'📊 Exam Results — SDNB Vaishnav College
+
+🌐 Results are published by: University of Madras / Madras University
+
+📋 How to Check:
+   1️⃣ Visit: https:https://www.sdnbvc.edu.in/
+   2️⃣ Navigate to Student Services → Exam Results.
+   3️⃣ Enter your Register Number and Date of Birth.
+   4️⃣ Download and save your result.
+
+📌 For Physical Marksheet: Collect from Admin Office after university dispatch.
+
+🔄 Revaluation / Retotalling:
+   — Apply through the University portal within the announced window.
+   — College Admin Office will guide you on submission.
+
+⚠️ Result queries: Contact Admin Office or your Department.
+📞 Contact: Admin Office — Evening Block
+🕐 Mon–Fri, 9:00 AM – 4:30 PM
+💡 Tip: Save your Register Number — needed for all result checks.',
+NULL, NULL, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+(65, 6, N'Tamil', N'result_enquiry',
+N'result, exam result, check result, university result, semester result, marks, grade, cgpa, result portal, result website, result announcement, result date, result out, arrear result, backlog result, revaluation, revaluation apply, தேர்வு முடிவு, மதிப்பெண்கள், முடிவு எப்போது',
+N'📊 தேர்வு முடிவுகள் — SDNB Vaishnav College
+
+🌐 முடிவுகள் வெளியிடப்படும் இடம்: University of Madras / Madras University
+
+📋 சரிபார்க்கும் முறை:
+   1️⃣ இணையதளம்: https://www.sdnbvc.edu.in/
+   2️⃣ Student Services → Exam Results க்கு செல்லுங்கள்.
+   3️⃣ உங்கள் Register Number மற்றும் பிறந்த தேதி உள்ளிடுங்கள்.
+   4️⃣ முடிவை பதிவிறக்கி சேமியுங்கள்.
+
+📌 Physical Marksheet: பல்கலைக்கழக அனுப்புதலுக்குப் பிறகு Admin Office-ல் பெறுங்கள்.
+
+🔄 Revaluation / Retotalling:
+   — அறிவிக்கப்பட்ட காலகட்டத்திற்குள் பல்கலைக்கழக portal மூலம் விண்ணப்பிக்கவும்.
+   — Admin Office உங்களுக்கு வழிகாட்டும்.
+
+⚠️ முடிவு தொடர்பான கேள்விகள்: Admin Office அல்லது உங்கள் துறையை தொடர்புகொள்ளுங்கள்.
+📞 தொடர்பு: Admin Office
+🕐 திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
+NULL, NULL, N'Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+-- ─────────────────────────────────────────────────────────────
+-- 2O ▸ ADMISSION ENQUIRY
+-- ─────────────────────────────────────────────────────────────
+
+(66, 5, N'English', N'admission',
+N'admission, admission procedure, how to apply, apply for admission, new admission, ug admission, pg admission, lateral entry, direct second year, admission form, admission eligibility, admission documents, admission fee, admission date, last date for admission, admission open, how to join college, how to get admission, admission 2024, admission 2025, cut off, merit list',
+N'🎓 Admission Information — SDNB Vaishnav College
+
+📋 Admission Types:
+   🎓 UG (Under Graduate) — 3/5 year programs
+   🎓 PG (Post Graduate) — 2 year programs
+   🔄 Lateral Entry — Direct Second Year (for Diploma holders)
+
+📝 General Process:
+   1️⃣ Visit the college website for application form / online portal link.
+   2️⃣ Fill in the application with academic and personal details.
+   3️⃣ Attach required documents.
+   4️⃣ Pay the application fee (if applicable).
+   5️⃣ Attend counseling / merit-based selection.
+   6️⃣ Collect admission confirmation from Admissions Office.
+
+🗂️ Documents Typically Required:
+   📊 10th & 12th Mark Sheet | 🪪 Aadhaar Card | 🏠 Community Certificate
+   💰 Income Certificate | 📸 Passport Photo | 🏫 Transfer Certificate (from previous institution)
+
+📞 Contact: Admissions Office / Admin Office
+🕐 Mon–Fri, 9:00 AM – 4:30 PM
+🌐 Refer the official college website for current admission dates and cut-off.',
+NULL, NULL, N'Admissions Office / Admin Office, Main Building (IT BLOCK), Ground Floor'),
+
+(67, 5, N'Tamil', N'admission',
+N'admission, சேர்க்கை, admission procedure, how to apply, apply for admission, new admission, ug admission, pg admission, lateral entry, admission form, admission eligibility, admission documents, admission fee, admission date, last date, admission open, கல்லூரியில் சேர, cut off, merit list, சேர்க்கை நடைமுறை',
+N'🎓 சேர்க்கை தகவல் — SDNB Vaishnav College
+
+📋 சேர்க்கை வகைகள்:
+   🎓 UG (இளங்கலை) — 3/5 ஆண்டு பாடங்கள்
+   🎓 PG (முதுகலை) — 2 ஆண்டு பாடங்கள்
+   🔄 Lateral Entry — நேரடி இரண்டாம் ஆண்டு (Diploma படித்தவர்களுக்கு)
+
+📝 பொதுவான நடைமுறை:
+   1️⃣ விண்ணப்பப் படிவத்திற்கு கல்லூரி இணையதளம் பாருங்கள்.
+   2️⃣ கல்வி மற்றும் தனிப்பட்ட விவரங்கள் நிரப்புங்கள்.
+   3️⃣ தேவையான ஆவணங்கள் இணையுங்கள்.
+   4️⃣ விண்ணப்பக் கட்டணம் செலுத்துங்கள் (பொருந்தினால்).
+   5️⃣ Counseling / merit-based selection-ல் கலந்துகொள்ளுங்கள்.
+   6️⃣ Admissions Office-ல் சேர்க்கை உறுதிப்பாட்டை பெறுங்கள்.
+
+🗂️ தேவையான ஆவணங்கள்:
+   📊 10th & 12th மார்க்ஷீட் | 🪪 Aadhaar Card | 🏠 Community Certificate
+   💰 வருமான சான்று | 📸 Passport Photo | 🏫 TC (முந்தைய கல்வி நிறுவனத்திலிருந்து)
+
+📞 தொடர்பு: Admissions Office / Admin Office
+🕐 திங்கட்கிழமை–வெள்ளிக்கிழமை, 9:00 AM – 4:30 PM',
+NULL, NULL, N'Admissions Office / Admin Office, Main Building (IT BLOCK), Ground Floor');
+
 SET IDENTITY_INSERT chatbot_intents OFF;
 GO
 
--- =========================
--- 3. POLICIES TABLE
--- =========================
-CREATE TABLE policies (
-    policy_id INT IDENTITY(1,1) PRIMARY KEY,
-    module_id INT NOT NULL,
-    language NVARCHAR(20) NOT NULL DEFAULT N'English',
-    policy_title NVARCHAR(150) NOT NULL,
-    policy_description NVARCHAR(MAX),
-    value_numeric DECIMAL(10,2) NULL,
-    value_text NVARCHAR(100) NULL,
-    fine_applicable BIT DEFAULT 0,
-    installment_allowed BIT DEFAULT 0,
-    due_date NVARCHAR(50) DEFAULT NULL,
-    office_location NVARCHAR(255) DEFAULT NULL,
-    FOREIGN KEY (module_id) REFERENCES modules(module_id)
-);
+PRINT N'✅ Section 2 complete — New intents inserted';
 GO
 
-SET IDENTITY_INSERT policies ON;
-INSERT INTO policies (policy_id, module_id, language, policy_title, policy_description, value_numeric, value_text, fine_applicable, installment_allowed, due_date, office_location) VALUES
-(1, 2, N'English', N'💰 Semester Fee', N'📋 Annual fee per semester at SDNB Vaishnav College', NULL, N'Refer website | 📅 Due on registration', 0, 1, N'Before semester starts', N'🏛️ Finance Office ( Admin Office)'),
-(2, 2, N'English', N'⚠️ Late Fee', N'🚨 Fine applicable after due date (Rs.500 per day)', 500.00, N'❌ Fine Applicable', 1, 0, N'7 days after due date', N'🏛️ Finance Office  ( Admin Office)'),
-(3, 2, N'English', N'🏠 Hostel Fee', N'🛏️ Annual hostel charges for residents', 30000.00, N'📅 Payable once a year', 0, 0, N'Before hostel registration', N'🏠 Hostel Office'),
-(4, 2, N'Tamil', N'💰 செமிஸ்டர் கட்டணம்', N'📋 SDNB Vaishnav College-ல் ஒரு செமிஸ்டருக்கு ஆண்டு கட்டணம்', 50000.00, N'📅 பதிவுக்கு முன் செலுத்த வேண்டும்', 0, 1, N'செமிஸ்டர் தொடங்குவதற்கு முன்', N'🏛️ Finance Office, Block-B'),
-(5, 2, N'Tamil', N'⚠️ தாமத கட்டணம்', N'🚨 கட்டணத்தின் கடைசி தேதிக்குப் பிறகு அபராதம் (Rs.500 நாளொன்றுக்கு)', 500.00, N'❌ அபராதம் பொருந்தும்', 1, 0, N'கடைசி தேதிக்கு 7 நாட்களுக்குப் பிறகு', N'🏛️ Finance Office'),
-(6, 3, N'English', N'🏥 Medical Leave', N'📋 Medical certificate required for absence', NULL, N'📄 Medical Certificate Required', 0, 0, N'Within 3 days of return', N'🏫 Department'),
-(7, 3, N'Tamil', N'🏥 மருத்துவ விடுப்பு', N'📋 விடுப்புக்கு மருத்துவச் சான்றிதழ் தேவை', NULL, N'📄 மருத்துவச் சான்றிதழ் அவசியம்', 0, 0, N'திரும்பிய 3 நாட்களுக்குள்', N'🏫 Department Office'),
-(8, 4, N'English', N'🎓 Transfer Certificate', N'📋 Students must complete department and office clearance before receiving TC', NULL, N'✅ Clearance Required (7–10 days)', 0, 0, N'Immediate', N'🏛️ Department and Admin Office'),
-(9, 4, N'Tamil', N'🎓 மாற்றுச் சான்றிதழ்', N'📋 TC பெற துறை மற்றும் அலுவலக clearance முடிக்க வேண்டும்', NULL, N'✅ Clearance அவசியம் (7–10 நாட்கள்)', 0, 0, N'உடனடியாக', N'🏛️ Department and Admin Office'),
-(10, 6, N'English', N'📅 Attendance Requirement', N'⚠️ Minimum 75% attendance required to write exam at SDNB Vaishnav College', 75.00, N'✅ Minimum 75%', 0, 0, NULL, N'🏛️ Department and Admin Office'),
-(11, 6, N'English', N'💰 Condonation Fee', N'📋 Condonation fee for 65–74% attendance', 250.00, N'💵 Rs.250 condonation fee', 1, 0, N'3 days before exam', N'🏛️ Admin Office '),
-(12, 6, N'Tamil', N'📅 Attendance Requirement', N'⚠️ தேர்வு எழுத குறைந்தபட்சம் 75% attendance தேவை', 75.00, N'✅ குறைந்தபட்சம் 75%', 0, 0, NULL, N'🏛️ Department and Admin Office');
-SET IDENTITY_INSERT policies OFF;
-GO
+-- ============================================================
+-- SECTION 3 ▸ VERIFICATION
+-- ============================================================
 
--- =========================
--- 4. ATTENDANCE CATEGORIES TABLE
--- =========================
-CREATE TABLE attendance_categories (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    category_code NVARCHAR(5) NOT NULL,
-    min_percent INT NOT NULL,
-    max_percent INT NOT NULL,
-    language NVARCHAR(20) NOT NULL,
-    title NVARCHAR(255) NOT NULL,
-    response NVARCHAR(MAX) NOT NULL,
-    action_required NVARCHAR(255) DEFAULT NULL,
-    fee_applicable DECIMAL(10,2) DEFAULT NULL
-);
-GO
+SELECT
+    ci.intent_id,
+    m.module_name,
+    ci.language,
+    ci.intent_name,
+    LEN(ci.keywords) AS keyword_char_length
+FROM chatbot_intents ci
+JOIN modules m ON ci.module_id = m.module_id
+ORDER BY ci.language, ci.module_id, ci.intent_id;
 
-SET IDENTITY_INSERT attendance_categories ON;
-INSERT INTO attendance_categories (id, category_code, min_percent, max_percent, language, title, response, action_required, fee_applicable) VALUES
-(1, N'A', 75, 100, N'English', N'✅ Category A — Eligible', N'🎉 Great job! You are eligible for exams without any restrictions.', NULL, NULL),
-(2, N'B', 65, 74, N'English', N'⚠️ Category B — Condonation Required', N'💰 Condonation fee Rs.250 must be paid before exam. Don''t miss the deadline!', N'💵 Pay Rs.250 at least 3 days before exam', 250.00),
-(3, N'C', 50, 64, N'English', N'❌ Category C — Not Allowed', N'🚫 Not allowed to write exam. You must repeat the course next semester.', N'📋 Contact HOD for re-registration', NULL),
-(4, N'D', 1, 49, N'English', N'🚫 Category D — Repeat Course', N'⛔ You must repeat the entire course next semester.', N'🏫 Visit Academic Office for re-admission', NULL),
-(5, N'E', 0, 0, N'English', N'🔄 Category E — Rejoin', N'📢 You must rejoin SDNB Vaishnav College in the next academic year.', N'🏛️ Report to Principal / Director ', NULL),
-(6, N'A', 75, 100, N'Tamil', N'✅ வகை A — தகுதியுள்ள', N'🎉 சிறப்பு! எந்தவொரு கட்டுப்பாடும் இல்லாமல் தேர்வு எழுதலாம்.', NULL, NULL),
-(7, N'B', 65, 74, N'Tamil', N'⚠️ வகை B — Condonation தேவை', N'💰 தேர்வுக்கு முன் Rs.250 condonation fee செலுத்த வேண்டும்!', N'💵 தேர்வுக்கு 3 நாட்களுக்கு முன் Rs.250 செலுத்துங்கள்', 250.00),
-(8, N'C', 50, 64, N'Tamil', N'❌ வகை C — அனுமதி இல்லை', N'🚫 தேர்வு எழுத அனுமதி இல்லை. பாடத்தை மீண்டும் படிக்க வேண்டும்.', N'📋 மீண்டும் பதிவு செய்ய HOD-ஐ தொடர்புகொள்ளுங்கள்', NULL),
-(9, N'D', 1, 49, N'Tamil', N'🚫 வகை D — மீண்டும் படிக்க', N'⛔ அடுத்த செமிஸ்டரில் முழு பாடத்தையும் மீண்டும் படிக்க வேண்டும்.', N'🏫 Academic Office-ற்கு சென்று மீண்டும் சேர்க்கை செய்யுங்கள்', NULL),
-(10, N'E', 0, 0, N'Tamil', N'🔄 வகை E — மீண்டும் சேர்க', N'📢 அடுத்த கல்வி ஆண்டில் SDNB Vaishnav College-ல் மீண்டும் சேர்க வேண்டும்.', N'🏛️ Principal Office-க்கு செல்லுங்கள்', NULL);
-SET IDENTITY_INSERT attendance_categories OFF;
-GO
+SELECT
+    language,
+    COUNT(*) AS total_intents
+FROM chatbot_intents
+GROUP BY language;
 
--- =========================
--- 5. STUDENT REQUESTS TABLE
--- =========================
-CREATE TABLE student_requests (
-    id INT PRIMARY KEY,
-    topic NVARCHAR(255),
-    year_of_discontinuation NVARCHAR(50),
-    reason NVARCHAR(100),
-    purpose NVARCHAR(MAX),
-    year_gap INT,
-    amount DECIMAL(10,2),
-    processing_time NVARCHAR(50) DEFAULT NULL,
-    office_location NVARCHAR(255) DEFAULT NULL,
-    notes NVARCHAR(MAX)
-);
-GO
-
-INSERT INTO student_requests (id, topic, year_of_discontinuation, reason, purpose, year_gap, amount, processing_time, office_location, notes) VALUES
-(1, N'🚪 Dropout/Discontinuation', N'Specify year', N'Academic/Personal/Financial/Health/Career/Other', N'📋 Apply with reason proof', NULL, NULL, N'7-10 working days', N'🏛️ Admin Office, Ground Floor', N'📎 All supporting documents required'),
-(2, N'📜 Medium of Instruction (MOI)', NULL, NULL, N'🎓 For job/higher studies', NULL, 1000.00, N'3-4 working days', N'🏛️ Admin Office', N'💰 Charges applicable: Rs.1,000'),
-(3, N'📄 Duplicate Marksheet (1 Year Gap)', NULL, NULL, N'📋 Request for duplicate certificates', 1, 1000.00, N'10-15 working days', N'🏛️ Admin Office, Records Desk', N'💰 1 year gap — Rs.1,000'),
-(4, N'📄 Duplicate Marksheet (2 Year Gap)', NULL, NULL, N'📋 Request for duplicate certificates', 2, 2000.00, N'10-15 working days', N'🏛️ Admin Office, Records Desk', N'💰 2 year gap — Rs.2,000'),
-(5, N'📄 Duplicate Marksheet (3 Year Gap)', NULL, NULL, N'📋 Request for duplicate certificates', 3, 3000.00, N'10-15 working days', N'🏛️ Admin Office, Records Desk', N'💰 3 year gap — Rs.3,000'),
-(6, N'📄 Duplicate Marksheet (4 Year Gap)', NULL, NULL, N'📋 Request for duplicate certificates', 4, 4000.00, N'10-15 working days', N'🏛️ Admin Office, Records Desk', N'💰 4 year gap — Rs.4,000'),
-(7, N'📄 Duplicate Marksheet (5 Year Gap)', NULL, NULL, N'📋 Request for duplicate certificates', 5, 5000.00, N'10-15 working days', N'🏛️ Admin Office, Records Desk', N'💰 5 year gap — Rs.5,000'),
-(8, N'📄 Duplicate Marksheet (>5 Year Gap)', NULL, NULL, N'⛔ Not available — Direct University contact required', NULL, NULL, N'4-6 weeks (University processing)', N'🏫 University Office', N'⚠️ Service not available if gap > 5 years'),
-(9, N'📄 General Bonafide Certificate', NULL, NULL, N'🎓 Proof of being a student', NULL, NULL, N'2-3 working days', N'🏛️ Admin Office, Certificates Desk', N'🆓 Free service — No fees'),
-(10, N'📄 Course Bonafide Certificate', NULL, NULL, N'📋 Course enrollment verification', NULL, NULL, N'3-4 working days', N'🏛️ Admin Office, Academics Desk', N'🆓 Free service'),
-(11, N'🛂 Passport Bonafide Certificate', NULL, NULL, N'🛂 Required for passport process', NULL, 50.00, N'2-3 working days', N'🏛️ Admin Office, Certificates Desk', N'💰 Fee: Rs.50'),
-(12, N'✅ Genuineness Certificate', NULL, NULL, N'🔍 Certificate verification', NULL, 500.00, N'5-7 working days', N'🏛️ Admin Office', N'💰 Fee: Rs.500'),
-(13, N'♿ Disability Student Exemption', NULL, NULL, N'📋 Request for exemption from fees/attendance', NULL, NULL, N'3-5 working days', N'🏛️ Admin Office/Dean Office', N'📎 Medical proof required'),
-(14, N'📄 Bonafide Without Fee Payment', NULL, NULL, N'📋 Special case bonafide request', NULL, NULL, N'3-5 working days (with approval)', N'🏛️ Admin Office, Special Cases', N'🔐 Principal approval needed'),
-(15, N'💼 Fee Structure Certificate', NULL, NULL, N'📋 Annual fee details', NULL, NULL, N'2-3 working days', N'🏛️ Admin Office', N'🆓 Free service');
-GO
-
--- =========================
--- 6. ADMIN SERVICES TABLE
--- =========================
-CREATE TABLE admin_services (
-    id INT PRIMARY KEY,
-    service_name NVARCHAR(255),
-    issued_by NVARCHAR(100),
-    purpose NVARCHAR(MAX),
-    requirements NVARCHAR(MAX),
-    fees DECIMAL(10,2),
-    processing_time NVARCHAR(50),
-    office_location NVARCHAR(255),
-    notes NVARCHAR(MAX)
-);
-GO
-
-INSERT INTO admin_services (id, service_name, issued_by, purpose, requirements, fees, processing_time, office_location, notes) VALUES
-(1, N'📄 Bonafide Certificate (General)', N'🏛️ Admin Office', N'🎓 Proof of student status at SDNB Vaishnav College', N'📋 Request form + Valid ID + Department/Union seals', 0.00, N'2-3 working days', N'🏛️ Admin Office, Main Building (IT BLOCK) Ground Floor', N'🆓 Free service — No fees'),
-(2, N'💼 Fee Structure Certificate', N'🏛️ Finance Office', N'💰 Provides annual fee details', N'📋 Request form + Fee payment receipt', 0.00, N'2-3 working days', N'🏛️ Finance Office', N'📎 Proof required'),
-(3, N'🏅 Scholarship Form Application', N'🏛️ Admin/Finance Office', N'🎓 Apply for scholarship', N'📋 Admin approval + Income proof', 0.00, N'5-7 working days', N'🏛️ Finance Office', N'🔍 Verification needed'),
-(4, N'📄 Course Bonafide', N'🏛️ Admin Office', N'📋 Course enrollment verification', N'📋 Request submission + Valid ID', 0.00, N'3-4 working days', N'🏛️ Admin Office, Main Building (IT BLOCK) Ground Floor', N'🆓 Free service'),
-(5, N'🚪 Student Outpass', N'🏛️ Admin Office', N'🏃 Permission to leave campus', N'✍️ Class Incharge approval + HOD permission', 0.00, N'2-4 hours', N'🏛️ Admin Office, Main Building (IT BLOCK) Ground Floor', N'📎 Maintain proper proof'),
-(6, N'🛂 Passport Bonafide', N'🏛️ Admin Office', N'🛂 Required for passport process', N'📋 Request + Valid ID + Admission document copy', 50.00, N'2-3 working days', N'🏛️ Admin Office, Main Building (IT BLOCK) Ground Floor', N'💰 Fee: Rs.50'),
-(7, N'📜 Medium of Instruction (MOI)', N'🏛️ Admin Office', N'🗣️ Certificate stating language of instruction (English/Tamil)', N'📋 Request submission + Valid ID', 1000.00, N'3-4 working days', N'🏛️ Admin Office, Main Building (IT BLOCK) Ground Floor', N'💰 Fee: Rs.1,000'),
-(8, N'📅 Attendance Certificate', N'🏛️ Admin Office', N'📋 Proof of previous semester attendance', N'🔍 Record verification + Valid ID', 0.00, N'2-3 working days', N'🏛️ Admin Office, Main Building Ground Floor', N'🆓 Free service'),
-(9, N'🥇 First Graduation Certificate', N'🏛️ Admin Office', N'🎓 Proof of first graduate status in family', N'📋 Submit declaration if not available', 0.00, N'3-4 working days', N'🏛️ Admin Office, Main Building (IT BLOCK) Ground Floor', N'📎 Alternative proof accepted'),
-(10, N'🌸 Menstrual Hygiene Product Service', N'🏥 College Facility', N'💊 Sanitary napkin availability for students', N'🪪 Student ID + Request at designated counter', 0.00, N'Immediate ⚡', N'🏥 College Health Center ', N'🆓 Free service — Token system'),
-(11, N'🍽️ Subsidized Canteen Meals', N'🍽️ Canteen Management', N'🥗 Affordable student meal service', N'🪪 Student ID + Token purchase', 10.00, N'Immediate ⚡', N'🍽️ College Canteen, Opposite to GB BLOCK', N'Collect token from admin Office (IT BLOCK) — 💰 Budget: Rs.10/meal'),
-(12, N'📢 Complaint Registration Service', N'🤝 Union/Admin Office', N'📝 Report issues or complaints', N'📋 Detailed complaint letter', 0.00, N'Same day registration', N'🏛️ Union Office/Admin Office', N'✅ Action taken within 7 days'),
-(13, N'🔍 Missing Items Report', N'🏛️ Admin/Union Office', N'📦 Report lost/found items on campus', N'📋 Submit complaint + Detailed description', 0.00, N'Same day recording', N'🏛️ Admin Office/Union Office', N'⏳ 30-day claim period'),
-(14, N'🪪 Lost ID Card Reissue', N'🏛️ Admin Office', N'🪪 Reissue ID card for lost/damaged cards', N'📋 Application form + HOD approval + Declaration form', 250.00, N'5-7 working days', N'🏛️ Admin Office, Main Building Ground Floor', N'💰 Fee: Rs.250'),
-(15, N'📄 Bonafide Without Fee (Special Cases)', N'🏛️ Admin Office', N'📋 Request bonafide without paying fees', N'🔐 Special permission + Proof of hardship', 0.00, N'3-5 working days', N'🏛️ Admin Office, Main Building Ground Floor', N'🔐 Case-by-case approval'),
-(16, N'👩‍👧 Single Parent Student Support', N'🤝 Admin/Student Affairs', N'💛 Support services for single parent students', N'📋 Proof of single parent status', 0.00, N'5-7 working days', N'🏛️ Dean of Student Affairs Office', N'📋 Staff approval needed'),
-(17, N'🔄 Discontinuation and Resumption', N'🏛️ Admin Office', N'📋 Discontinue and resume studies', N'📋 Request submission + Approved reason', 0.00, N'5-7 working days', N'🏛️ Admin Office, Main Building Ground Floor', N'⚠️ No break allowed'),
-(18, N'♿ Physically Challenged Student Support', N'🏛️ Admin Office/COE', N'💛 Support for physically challenged students', N'📋 Medical proof + COE permission + HOD letter', 0.00, N'5-7 working days', N'🏛️ Admin Office/Accessibility Office,', N'🆓 Free service — Special arrangements');
-GO
-
--- =========================
--- 7. DROPOUT REASONS TABLE
--- =========================
-CREATE TABLE dropout_reasons (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    category NVARCHAR(100) NOT NULL,
-    reason_code NVARCHAR(10) NOT NULL UNIQUE,
-    reason_text NVARCHAR(255) NOT NULL,
-    reason_tamil NVARCHAR(255) DEFAULT NULL,
-    action_required NVARCHAR(255) DEFAULT NULL
-);
-GO
-
-INSERT INTO dropout_reasons (category, reason_code, reason_text, reason_tamil, action_required) VALUES
-(N'📚 Academic', N'AC01', N'❌ Failed in exams repeatedly', N'தேர்வில் திரும்பவும் தோல்வி', N'📋 Consult with Academic Advisor'),
-(N'📚 Academic', N'AC02', N'📖 Unable to cope with studies', N'படிப்பை தொடர முடியவில்லை', N'👩‍🏫 Meet with Course Instructor'),
-(N'📚 Academic', N'AC03', N'🔄 Change of course or institution', N'வேறு படிப்பு / கல்லூரிக்கு மாறுதல்', N'🏫 Contact Admissions Office'),
-(N'📚 Academic', N'AC04', N'🚌 Transferred to another college', N'வேறு கல்லூரிக்கு இடமாற்றம்', N'📋 Complete Admin formalities'),
-(N'👨‍👩‍👧 Personal', N'PE01', N'💍 Marriage', N'திருமணம்', N'📄 Provide marriage certificate'),
-(N'👨‍👩‍👧 Personal', N'PE02', N'🏠 Family responsibilities', N'குடும்ப பொறுப்புகள்', N'📝 Submit affidavit'),
-(N'👨‍👩‍👧 Personal', N'PE03', N'🕊️ Death of a parent or family member', N'குடும்பத்தினர் இறப்பு', N'📄 Submit death certificate'),
-(N'👨‍👩‍👧 Personal', N'PE04', N'🗺️ Relocation to another city or state', N'வேறு நகரம் / மாநிலத்திற்கு இடம் மாறுதல்', N'📋 Update address with admin'),
-(N'💰 Financial', N'FI01', N'💸 Unable to pay fees', N'கட்டணம் செலுத்த இயலவில்லை', N'🏛️ Contact Finance Office'),
-(N'💰 Financial', N'FI02', N'📉 Financial hardship or family income loss', N'நிதி சிரமம்', N'📋 Submit income proof'),
-(N'💰 Financial', N'FI03', N'👷 Need to work to support family', N'குடும்பத்தை ஆதரிக்க வேலைக்கு செல்வது', N'🤝 Discuss with Admin'),
-(N'🏥 Health', N'HE01', N'🤒 Long-term medical illness', N'நீண்ட நாள் நோய்', N'📄 Submit medical certificate'),
-(N'🏥 Health', N'HE02', N'🧠 Mental health issues', N'மன நலப் பிரச்சினை', N'💛 Contact Counseling Center'),
-(N'🏥 Health', N'HE03', N'♿ Physical disability or accident', N'உடல் ஊனம் / விபத்து', N'📋 Register with Disability Services'),
-(N'💼 Career', N'CA01', N'🎯 Got a job', N'வேலை கிடைத்தது', N'📄 Request TC'),
-(N'💼 Career', N'CA02', N'📝 Pursuing competitive exams (UPSC/TNPSC)', N'போட்டித் தேர்வுகளுக்கு படிக்கிறேன்', N'💬 Discuss options with admin'),
-(N'💼 Career', N'CA03', N'🏢 Started own business', N'சொந்த தொழில் தொடங்கியது', N'📋 Submit business proof'),
-(N'💼 Career', N'CA04', N'🎖️ Selected in armed forces or government service', N'அரசு / ராணுவ சேவையில் சேர்ந்தது', N'⚡ Request expedited TC'),
-(N'🔖 Other', N'OT01', N'🔒 Personal reasons (undisclosed)', N'தனிப்பட்ட காரணம்', N'💬 Discuss with HOD'),
-(N'🔖 Other', N'OT02', N'📋 Others', N'மற்றவை', N'🏛️ Contact Admin Office');
-GO
-
--- =========================
--- ✅ VERIFICATION QUERIES
--- =========================
-
-SELECT N'📊 chatbot_intents table check' AS verification, COUNT(*) AS total_rows FROM chatbot_intents;
-SELECT N'📊 policies table check' AS verification, COUNT(*) AS total_rows FROM policies;
-SELECT N'📊 attendance_categories check' AS verification, COUNT(*) AS total_rows FROM attendance_categories;
-SELECT N'📊 student_requests check' AS verification, COUNT(*) AS total_rows FROM student_requests;
-SELECT N'📊 admin_services check' AS verification, COUNT(*) AS total_rows FROM admin_services;
-SELECT N'📊 dropout_reasons check' AS verification, COUNT(*) AS total_rows FROM dropout_reasons;
-
--- =========================
--- 📋 DISPLAY SAMPLE DATA
--- =========================
-
-SELECT N'🤖 Chatbot Intents Sample' AS title;
-SELECT TOP 5 intent_id, intent_name, module_id, processing_time, fees, office_location FROM chatbot_intents;
-
-SELECT N'📜 Policies Sample' AS title;
-SELECT TOP 5 policy_id, policy_title, value_numeric, due_date FROM policies;
-
-SELECT N'📅 Attendance Categories Sample' AS title;
-SELECT category_code, min_percent, max_percent, action_required, fee_applicable FROM attendance_categories;
+PRINT N'';
+PRINT N'✅ college_db_enhanced.sql executed successfully.';
+PRINT N'   — Keywords expanded for all 22 original intents';
+PRINT N'   — 38 new intents added covering: Tamil bonafide sub-types,';
+PRINT N'     Fees, Condonation, Scholarship, Hostel, Library, Canteen,';
+PRINT N'     Complaints, MOI, Genuineness, Office Timings, First Graduate,';
+PRINT N'     Disability Support, Results, and Admission';
 GO
